@@ -275,6 +275,7 @@ export const orarioRouter = createTRPCRouter({
 
             try {
                 return await jobWithMessage("Retrieving cached data...", async () => await getCachedMatches(), "Cached data retrieved successfully");
+
             } catch (err) {
                 console.log("[ERROR] Error retrieving cached data: " + err);
                 throw new TRPCError({
