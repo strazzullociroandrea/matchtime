@@ -8,7 +8,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 RUN pnpm run build
 RUN pnpm prune --prod
 
