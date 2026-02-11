@@ -282,13 +282,13 @@ export const orarioRouter = createTRPCRouter({
             );
 
             try {
-                return await jobWithMessage("Retrieving cached data...", async () => {
+                return jobWithMessage("Retrieving cached data...", async () => {
                     let attempts = 0;
                     const attemptsLimit = 3;
-
-                    while (attempts < attemptsLimit) {
+                    let data: PartitaVolley[] | undefined;
+                    while (attempts < attemptsLimit && !data) {
                         try {
-                            const data: PartitaVolley[] | undefined = await getCachedMatches();
+                            data = await getCachedMatches();
                             if (data) {
                                 return data;
                             } else {
