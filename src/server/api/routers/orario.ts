@@ -7,10 +7,6 @@ import {type Page, type Browser} from "puppeteer";
 import ExcelJS from 'exceljs';
 import {unstable_cache} from 'next/cache';
 
-
-/**
- * Interface representing a volleyball match.
- */
 interface PartitaVolley {
     Giornata: string | number;
     Numero: string | number;
@@ -38,7 +34,6 @@ const jobWithMessage = async <T>(startMessage: string, job: () => T | Promise<T>
             {cause: e instanceof Error ? e : undefined});
     }
 }
-
 
 const openBrowser = async (downloadPath: string): Promise<Page> => {
     try {
