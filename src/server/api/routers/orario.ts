@@ -58,7 +58,15 @@ const jobWithMessage = async <T>(startMessage: string, job: () => T | Promise<T>
  */
 const openBrowser = async (downloadPath: string): Promise<Page> => {
     try {
-        const browser: Browser = await puppeteer.launch({headless: true});
+        const browser: Browser = await puppeteer.launch({
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ],
+        });
         const page: Page = await browser.newPage();
 
         const client = await page.createCDPSession();
