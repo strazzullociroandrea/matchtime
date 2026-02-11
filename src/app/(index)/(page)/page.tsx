@@ -110,6 +110,10 @@ export default function Home() {
                     </Card>
                 ))}
             </div>
+            <footer className="mt-12 text-center text-xs text-muted-foreground">
+                Dati tratti dal portale ufficiale PGS. Questo sito non è affiliato o approvato da PGS.
+            </footer>
         </div>
+
     );
 }
