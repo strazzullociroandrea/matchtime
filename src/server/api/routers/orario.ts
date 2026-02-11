@@ -282,7 +282,23 @@ export const orarioRouter = createTRPCRouter({
             );
 
             try {
-                return await jobWithMessage("Retrieving cached data...", async () => await getCachedMatches(), "Cached data retrieved successfully");
+                return await jobWithMessage("Retrieving cached data...", async () => {
+                    let attempts = 0;
+                    const attemptsLimit = 3;
+
+                    while (attempts < attemptsLimit) {
+                        try {
+                            const data: PartitaVolley[] | undefined = await getCachedMatches();
+                            if (data) {
+                                return data;
+                            } else {
+                                attempts++;
+                            }
+                        } catch (e) {
+                            attempts++;
+                        }
+                    }
+                }, "Cached data retrieved successfully");
 
             } catch (err) {
                 console.log("[ERROR] Error retrieving cached data: " + err);
