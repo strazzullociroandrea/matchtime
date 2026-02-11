@@ -20,7 +20,16 @@ RUN apt-get update && apt-get install -y \
     libpango-1.0-0 \
     libcairo2 \
     libasound2 \
-    --no-install-recommends && rm -rf /var/lib/apt/lists/*
+    libxfixes3 \
+        libx11-6 \
+        libx11-xcb1 \
+        libxcb1 \
+        libxext6 \
+        libxi6 \
+        libxrender1 \
+        libxss1 \
+        libxtst6 \
+        --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./

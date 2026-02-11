@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: "Match Time",
     description: "A simple match time tracker for Under 15 maschile PGS volleyball team.",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Match Time",
+    },
 };
 
 export default function RootLayout({
