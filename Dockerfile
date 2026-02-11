@@ -10,7 +10,6 @@ COPY . .
 
 RUN pnpm install
 RUN pnpm run build
-RUN pnpm prune --prod
 
 EXPOSE 3000
 CMD ["pnpm", "start"]
