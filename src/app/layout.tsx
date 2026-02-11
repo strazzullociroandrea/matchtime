@@ -22,6 +22,7 @@ export const metadata: Metadata = {
         statusBarStyle: "default",
         title: "Match Time",
     },
+    manifest: "/manifest.json",
 };
 
 export default function RootLayout({
