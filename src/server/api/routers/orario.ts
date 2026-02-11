@@ -7,6 +7,10 @@ import {type Page, type Browser} from "puppeteer";
 import ExcelJS from 'exceljs';
 import {unstable_cache} from 'next/cache';
 
+
+/**
+ * Interface representing a volleyball match, containing details such as the matchday, number, date, time, home team, away team, and address.
+ */
 interface PartitaVolley {
     Giornata: string | number;
     Numero: string | number;
@@ -18,6 +22,15 @@ interface PartitaVolley {
     Done: boolean;
 }
 
+/**
+ * Function that wraps a job with start and end messages, useful for logging and user feedback. The job can be synchronous or asynchronous.
+ *
+ * @param startMessage Initial Message to indicate the start of the job
+ * @param job Function that performs the job, can return a value or a Promise
+ * @param endMessage Final Message to indicate the completion of the job
+ *
+ * @return The result of the job, if it returns a value or a Promise that resolves to a value
+ */
 const jobWithMessage = async <T>(startMessage: string, job: () => T | Promise<T>, endMessage: string) => {
     try {
         console.log(`[LOG] ${startMessage}`);
@@ -32,14 +45,20 @@ const jobWithMessage = async <T>(startMessage: string, job: () => T | Promise<T>
         console.log("[ERROR] Error during job execution: " + e);
         throw new Error(`Error during job execution: ${e}`,
             {cause: e instanceof Error ? e : undefined});
+
     }
 }
 
+/**
+ * Function to open a browser using Puppeteer, set up the download behavior, and return the page instance.
+ *
+ * @param downloadPath The temporary path where the file will be downloaded
+ * @return A Promise that resolves to the Page instance of the opened browser
+ * @throws TRPCError if there is an error during the browser opening process
+ */
 const openBrowser = async (downloadPath: string): Promise<Page> => {
     try {
-        const browser: Browser = await puppeteer.launch({
-            headless: true
-        });
+        const browser: Browser = await puppeteer.launch({headless: true});
         const page: Page = await browser.newPage();
 
         const client = await page.createCDPSession();
@@ -57,8 +76,17 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
     }
 }
 
+/**
+ * Function to navigate to the specified URL, set the category and team, click the download button, and handle the downloaded file.
+ *
+ * @param page The Page instance of the opened browser
+ * @param downloadPath The temporary path where the file will be downloaded
+ * @throws TRPCError if there is an error during the data retrieval process
+ * @returns A Promise that resolves when the data retrieval process is complete
+ */
 const getExcel = async (page: Page, downloadPath: string) => {
     try {
+
         await page.goto(process.env.URL_DOWNLOAD_SITE!, {waitUntil: 'networkidle2'});
 
         await jobWithMessage("Setting category...", async () => {
@@ -74,12 +102,14 @@ const getExcel = async (page: Page, downloadPath: string) => {
             } catch (err) {
                 throw new Error("Error setting category: " + err);
             }
+
         }, "Category set successfully");
 
         await jobWithMessage("Setting team...", async () => {
             try {
                 const teamSelector = '#available-teams';
                 const targetSquadra = process.env.TEAM_CATEGORY!;
+                console.log("Ricerca squadra: " + targetSquadra);
                 await page.type(teamSelector, targetSquadra, {delay: 100});
                 const squadraOption = `li.MuiAutocomplete-option ::-p-text(${targetSquadra})`;
                 await page.waitForSelector(squadraOption, {visible: true, timeout: 5000});
@@ -87,23 +117,43 @@ const getExcel = async (page: Page, downloadPath: string) => {
             } catch (err) {
                 throw new Error("Error setting team: " + err);
             }
+
         }, "Team set successfully");
 
         return await jobWithMessage("Downloading data...", async () => {
+
             const button = await page.waitForSelector('xpath///button[contains(., "Scarica Excel")]');
             if (!button) throw new Error("Download button not found");
             await button.click();
 
             return await jobWithMessage("Waiting for file to download...", async () => {
-                await new Promise(res => setTimeout(res, 5000));
-                const files = fs.readdirSync(downloadPath);
-                const validFiles = files.filter(f => !f.startsWith('.') && (f.endsWith('.xlsx') || f.includes('xlsx')));
-                if (validFiles.length === 0) throw new Error("File non scaricato");
-                return validFiles[0] as string;
-            }, "File downloaded successfully");
+
+                    await new Promise(res => setTimeout(res, 5000));
+                    try {
+                        const files = fs.readdirSync(downloadPath);
+
+                        const validFiles = files.filter(f =>
+                            !f.startsWith('.') &&
+                            (f.endsWith('.xlsx') || f.includes('xlsx'))
+                        );
+
+                        const fileName = validFiles[0] as string;
+                        return fileName;
+
+                    } catch
+                        (e) {
+                        throw new Error(`Error during file processing: ${e instanceof Error ? e.message : e}`);
+                    }
+                }
+                ,
+                "File downloaded successfully"
+            )
+                ;
+
         }, "Data downloaded successfully");
 
-    } catch (err) {
+    } catch
+        (err) {
         throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
             message: 'Failed get data.',
@@ -114,75 +164,111 @@ const getExcel = async (page: Page, downloadPath: string) => {
     }
 }
 
+/**
+ * Function to check if the date of the match has already passed compared to the current date. It takes a date string in the format "dd/MM/yyyy" and compares it with today's date.
+ * @param dateStr A string representing the date of the match in the format "dd/MM/yyyy"
+ * @return A boolean value indicating whether the match date has already passed (true) or is still upcoming (false)
+ */
 const isDayPassed = (dateStr: string): boolean => {
     const [day, month, year] = dateStr.split('/').map(Number);
-    if (!day || !month || !year) return false;
     const matchDate = new Date(year, month - 1, day);
     const today = new Date();
     return matchDate < today;
 }
 
+/**
+ * Function to read the downloaded Excel file, extract the relevant data, and return it as an array of PartitaVolley objects.
+ *
+ * @param downloadPath The path where the file was downloaded
+ * @param fileName The name of the downloaded file
+ * @returns A Promise that resolves to an array of PartitaVolley objects containing the extracted data
+ * @throws Error if the file is not found, is empty, or if there is an error during file processing
+ */
 const readFile = async (downloadPath: string, fileName: string): Promise<PartitaVolley[]> => {
     const fullPath = path.join(downloadPath, fileName);
+    let ready = false;
+
+    for (let i = 0; i < 10; i++) {
+        if (fs.existsSync(fullPath) && fs.statSync(fullPath).size > 0) {
+            ready = true;
+            break;
+        }
+        await new Promise(res => setTimeout(res, 1000));
+    }
+
+    if (!ready) throw new Error("File not found or empty");
+
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(fullPath);
     const worksheet = workbook.getWorksheet(1);
+
     if (!worksheet) throw new Error("Internal error: Worksheet not found");
 
     const match: PartitaVolley[] = [];
+
     worksheet.eachRow((row, rowNumber) => {
         if (rowNumber > 3) {
+
             const getVal = (col: number): string => {
                 const cell = row.getCell(col).value;
+
                 if (cell === null || cell === undefined) return "";
-                if (typeof cell === 'object' && 'result' in cell) return String(cell.result ?? "").trim();
-                if (cell instanceof Date) return cell.toLocaleDateString('it-IT');
+
+                if (typeof cell === 'object' && 'result' in cell) {
+                    return String(cell.result ?? "").trim();
+                }
+                if (cell instanceof Date) {
+                    return cell.toLocaleDateString('it-IT');
+                }
+
                 return String(cell).trim();
             };
 
-            const dataPartita = getVal(3);
-            match.push({
+            const partita: PartitaVolley = {
                 Giornata: getVal(1),
                 Numero: getVal(2),
-                Data: dataPartita,
+                Data: getVal(3),
                 Ora: getVal(4),
                 Casa: getVal(5),
                 Trasferta: getVal(6),
                 Indirizzo: getVal(7),
-                Done: isDayPassed(dataPartita)
-            });
+                Done: isDayPassed(getVal(3))
+            };
+
+            match.push(partita);
         }
     });
 
-    fs.unlinkSync(fullPath);
     return match;
 }
 
+/**
+ * tRPC router for handling requests related to retrieving volleyball match information. It defines a single procedure `getInfo` that performs the entire process of opening a browser, navigating to the specified URL, setting the category and team, downloading the Excel file, and processing it to extract the relevant data.
+ */
 export const orarioRouter = createTRPCRouter({
     getInfo: publicProcedure
-        .query(async () => {
+        .query(async ({input, ctx}) => {
             const getCachedMatches = unstable_cache(
                 async () => {
-                    const downloadPath = path.join(process.cwd(), "public", "download");
-                    if (!fs.existsSync(downloadPath))
-                        fs.mkdirSync(downloadPath, {recursive: true});
+                    try {
 
-                    const page = await openBrowser(downloadPath);
-                    const fileName = await getExcel(page, downloadPath);
-                    const matches = await readFile(downloadPath, fileName);
+                        const downloadPath = path.join(process.cwd(), "public", "download");
+                        if (!fs.existsSync(downloadPath))
+                            fs.mkdirSync(downloadPath, {recursive: true});
 
-                    if (!matches || matches.length === 0) {
-                        throw new Error("Data not found.");
+                        const page: Page = await jobWithMessage("Starting browser...", async () => await openBrowser(downloadPath), "Browser started successfully");
+                        const fileName = await jobWithMessage("Retrieving data...", async () => await getExcel(page, downloadPath), "Data retrieved successfully");
+                        const matches: PartitaVolley[] = await jobWithMessage("Processing file...", async () => await readFile(downloadPath, fileName), "File processed successfully");
+
+                        return matches;
+                    } catch (e) {
+                        console.error("Errore durante l'esecuzione del browser:", e);
                     }
 
-                    const browser = page.browser();
-                    await browser.close();
-
-                    return matches;
                 },
                 ['volleyball-matches-data'],
                 {
-                    revalidate: 86400,
+                    revalidate: 86.400,
                     tags: ['matches']
                 }
             );
@@ -190,8 +276,12 @@ export const orarioRouter = createTRPCRouter({
             try {
                 return await jobWithMessage("Retrieving cached data...", async () => await getCachedMatches(), "Cached data retrieved successfully");
             } catch (err) {
-                console.log("[ERROR] Scraping fallito, riproverò al prossimo caricamento: " + err);
-                return [];
+                console.log("[ERROR] Error retrieving cached data: " + err);
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Failed to retrieve cached data.',
+                    cause: err,
+                });
             }
         })
 });
