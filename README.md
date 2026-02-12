@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PGS Match time
 
-## Getting Started
+**PGS Match Time** è un sistema leggero e intuitivo progettato per raccogliere, gestire e visualizzare i match dei
+campionati di pallavolo **PGS (Polisportive Giovanili Salesiane)**
+di una specifica società e categoria definite nelle variabili di ambiente (.env).
+L'obiettivo è fornire un'interfaccia semplice e accessibile per monitorare i match in tempo reale, facilitandone
+l'accesso.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Funzionalità
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le principali funzionalità del sistema includono:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Visualizzazione dei match aggiornati alla data odierna per la società e categoria specificate, mostrando le
+  informazioni principali (data, ora, squadra di casa, squadra in trasferta, stato, indirizzo)
+- Aggiornamento automatico dei match ogni 24 ore, garantendo dati sempre aggiornati e accurati, direttamente recuperati
+  dal file excel, accessibile pubblicamente, presente sul sito ufficiale PGS (https://www.volley.pgsmilano.org).
+- Link rapido al navigatore, impostato sul dispositivo, per raggiungere facilmente la sede della partita
+- Interfaccia responsive e user-friendly, accessibile da qualsiasi dispositivo, inclusi smartphone, tablet e desktop.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Stack tecnologico
 
-To learn more about Next.js, take a look at the following resources:
+Il progetto è stato sviluppato utilizzando:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Frontend e UI**: React, Tailwind CSS, Shadcn UI
+- **Backend**: tRPC
+- **Aggiuntivi**: Docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Contatti
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Github: [strazzullociroandrea](https://github.com/strazzullociroandrea/)
+<br>
+Email: [info@cirostrazzullo.it](mailto:info@cirostrazzullo.it)
+<br>
+Sito web: [cirostrazzullo.it](https://www.cirostrazzullo.it)
+ 
+> ### Attenzione  
+> Questo sito è un progetto indipendente e non ufficiale. I dati dei calendari sono di proprietà di PGS (Polisportive Giovanili Salesiane), recuperati tramite file excel reso disponbile dagli stessi. L'autore non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare sempre il portale ufficiale per le comunicazioni formali.
