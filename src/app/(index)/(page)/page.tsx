@@ -111,7 +111,12 @@ export default function Home() {
                 ))}
             </div>
             <footer className="mt-12 text-center text-xs text-muted-foreground">
-                Questo sito è un progetto indipendente e non ufficiale. I dati dei calendari sono di proprietà di PGS (Polisportive Giovanili Salesiane). L'autore non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare sempre il portale ufficiale per le comunicazioni formali.            </footer>
+                Questo sito è un progetto indipendente e non ufficiale. I dati dei calendari sono di proprietà di PGS
+                (Polisportive Giovanili Salesiane), recuperati tramite file excel reso disponbile dagli stessi.
+                L&apos;autore
+                non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare
+                sempre il portale ufficiale per le comunicazioni formali.
+            </footer>
         </div>
 
     );

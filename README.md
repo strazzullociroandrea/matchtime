@@ -40,4 +40,4 @@ Email: [info@cirostrazzullo.it](mailto:info@cirostrazzullo.it)
 Sito web: [cirostrazzullo.it](https://www.cirostrazzullo.it)
  
 > ### Attenzione  
-> Questo sito è un progetto indipendente e non ufficiale. I dati dei calendari sono di proprietà di PGS (Polisportive Giovanili Salesiane). L'autore non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare sempre il portale ufficiale per le comunicazioni formali.
+> Questo sito è un progetto indipendente e non ufficiale. I dati dei calendari sono di proprietà di PGS (Polisportive Giovanili Salesiane), recuperati tramite file excel reso disponbile dagli stessi. L'autore non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare sempre il portale ufficiale per le comunicazioni formali.
