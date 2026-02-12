@@ -250,61 +250,60 @@ const readFile = async (downloadPath: string, fileName: string): Promise<Partita
     return match;
 }
 
+let isWorking = false;
+
 /**
  * tRPC router for handling requests related to retrieving volleyball match information. It defines a single procedure `getInfo` that performs the entire process of opening a browser, navigating to the specified URL, setting the category and team, downloading the Excel file, and processing it to extract the relevant data.
  */
 export const orarioRouter = createTRPCRouter({
     getInfo: publicProcedure
-        .query(async ({input, ctx}) => {
+        .query(async () => {
+
             const getCachedMatches = unstable_cache(
                 async () => {
+                    if (isWorking) {
+                        throw new TRPCError({
+                            code: 'TOO_MANY_REQUESTS',
+                            message: 'Data retrieval in progress. Please try again later.',
+                        });
+                    }
+
                     try {
+                        isWorking = true;
 
                         const downloadPath = path.join(process.cwd(), "public", "download");
                         if (!fs.existsSync(downloadPath))
                             fs.mkdirSync(downloadPath, {recursive: true});
 
-                        const page: Page = await jobWithMessage("Starting browser...", async () => await openBrowser(downloadPath), "Browser started successfully");
-                        const fileName = await jobWithMessage("Retrieving data...", async () => await getExcel(page, downloadPath), "Data retrieved successfully");
-                        const matches: PartitaVolley[] = await jobWithMessage("Processing file...", async () => await readFile(downloadPath, fileName), "File processed successfully");
+                        const page = await openBrowser(downloadPath);
+                        const fileName = await getExcel(page, downloadPath);
+                        const matches = await readFile(downloadPath, fileName);
+
+                        try {
+                            fs.unlinkSync(path.join(downloadPath, fileName));
+                        } catch (e) {
+                        }
 
                         return matches;
-                    } catch (e) {
-                        console.error("Errore durante l'esecuzione del browser:", e);
+                    } finally {
+                        isWorking = false;
                     }
-
                 },
                 ['volleyball-matches-data'],
                 {
-                    revalidate: 86.400,
+                    revalidate: 86400,
                     tags: ['matches']
                 }
             );
 
             try {
-                return jobWithMessage("Retrieving cached data...", async () => {
-                    let attempts = 0;
-                    const attemptsLimit = 3;
-                    let data: PartitaVolley[] | undefined;
-                    while (attempts < attemptsLimit && !data) {
-                        try {
-                            data = await getCachedMatches();
-                            if (data) {
-                                return data;
-                            } else {
-                                attempts++;
-                            }
-                        } catch (e) {
-                            attempts++;
-                        }
-                    }
-                }, "Cached data retrieved successfully");
-
+                return await getCachedMatches();
             } catch (err) {
-                console.log("[ERROR] Error retrieving cached data: " + err);
+                if (err instanceof TRPCError) throw err;
+
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',
-                    message: 'Failed to retrieve cached data.',
+                    message: 'Failed to retrieve match data.',
                     cause: err,
                 });
             }
