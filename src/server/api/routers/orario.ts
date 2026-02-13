@@ -21,6 +21,7 @@ interface PartitaVolley {
     Indirizzo: string;
     Done: boolean;
     ThisWeek: boolean;
+    IsHome: boolean;
 }
 
 /**
@@ -260,7 +261,8 @@ const readFile = async (downloadPath: string, fileName: string): Promise<Partita
                 Trasferta: getVal(6),
                 Indirizzo: getVal(7),
                 Done: isDayPassed(getVal(3)),
-                ThisWeek: thisWeek(getVal(3))
+                ThisWeek: thisWeek(getVal(3)),
+                IsHome: getVal(7).toLowerCase() === process.env.HOME_TEAM_PLACE!.toLowerCase()
             };
 
             match.push(partita);
