@@ -36,7 +36,7 @@ export default function Home() {
 
     return (
         <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
-            <header className="mb-10 text-center">
+            <header className="mb-10 text-center sticky top-0 z-50 bg-background/90 backdrop-blur-sm rounded-lg py-4">
                 <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-2">Calendario Partite</h1>
                 {/*Da settare ad ogni cambio stagione/categoria*/}
                 <p className="text-muted-foreground italic">Sfoglia le partite
@@ -49,6 +49,7 @@ export default function Home() {
                         key={index}
                         className={cn(
                             "relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-l-4",
+                            matchSingle.IsHome ? "border-l-primary bg-primary/5" : "border-l-muted"
                         )}
                     >
 
@@ -60,9 +61,9 @@ export default function Home() {
                                     </Badge>
                                 </div>
                                 <Badge
-                                    variant={matchSingle.Done ? "destructive" : "default"}
+                                    variant={matchSingle.Done ? "destructive" : (matchSingle.ThisWeek ? "default" : "outline")}
                                 >
-                                    {matchSingle.Done ? "Conclusa" : "In programma"}
+                                    {matchSingle.Done ? "Conclusa" :  (matchSingle.ThisWeek ? "Prossima" : "In programma")}
                                 </Badge>
                             </div>
 
@@ -116,6 +117,15 @@ export default function Home() {
                 L&apos;autore
                 non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare
                 sempre il portale ufficiale per le comunicazioni formali.
+                <span className="block mt-2 font-bold">
+                    Last updated: {new Date().toLocaleDateString("it-IT", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            })}
+                </span>
             </footer>
         </div>
 

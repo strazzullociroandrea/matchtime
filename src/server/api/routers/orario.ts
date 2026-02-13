@@ -20,6 +20,8 @@ interface PartitaVolley {
     Trasferta: string;
     Indirizzo: string;
     Done: boolean;
+    ThisWeek: boolean;
+    IsHome: boolean;
 }
 
 /**
@@ -185,6 +187,24 @@ const isDayPassed = (dateStr: string): boolean => {
 }
 
 /**
+ * Function to check if the match date is in the current week.
+ * @param dateStr A string representing the date of the match in the format "dd/MM/yyyy"
+ * @returns A boolean value indicating whether the match date is in the current week (true) or not (false)
+ */
+const thisWeek = (dateStr: string): boolean => {
+    const today = new Date();
+    const todayDay = today.getDate();
+    const todayMonth = today.getMonth() + 1;
+    const todayYear = today.getFullYear();
+    const [day, month, year] = dateStr.split('/').map(Number);
+                    
+    const sameYear: boolean = year === todayYear;
+    const sameMonth: boolean = month === todayMonth;
+    const sameWeek: boolean = Math.abs(day - todayDay) <= 7;
+                    
+    return sameYear && sameMonth && sameWeek;
+}
+/**
  * Function to read the downloaded Excel file, extract the relevant data, and return it as an array of PartitaVolley objects.
  *
  * @param downloadPath The path where the file was downloaded
@@ -240,7 +260,9 @@ const readFile = async (downloadPath: string, fileName: string): Promise<Partita
                 Casa: getVal(5),
                 Trasferta: getVal(6),
                 Indirizzo: getVal(7),
-                Done: isDayPassed(getVal(3))
+                Done: isDayPassed(getVal(3)),
+                ThisWeek: thisWeek(getVal(3)),
+                IsHome: getVal(7).toLowerCase() === process.env.HOME_TEAM_PLACE!.toLowerCase()
             };
 
             match.push(partita);
@@ -250,6 +272,17 @@ const readFile = async (downloadPath: string, fileName: string): Promise<Partita
     return match;
 }
 
+/**
+ * Function to sort the matches based on their status (Done or Not Done).
+ * @param matches An array of PartitaVolley objects representing the matches to be sorted
+ * @returns A sorted array of PartitaVolley objects.
+ */
+const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
+    return matches.sort((a,b)=>{
+        if(a.Done === b.Done) return 0;
+        return a.Done ? 1 : -1;
+    })
+}
 let isWorking = false;
 
 /**
@@ -284,7 +317,8 @@ export const orarioRouter = createTRPCRouter({
                         } catch (e) {
                         }
 
-                        return matches;
+                        const orderedMatches = orderByStatus(matches);
+                        return orderedMatches;
                     } finally {
                         isWorking = false;
                     }
