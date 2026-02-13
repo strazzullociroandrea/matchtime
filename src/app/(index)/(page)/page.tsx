@@ -60,9 +60,9 @@ export default function Home() {
                                     </Badge>
                                 </div>
                                 <Badge
-                                    variant={matchSingle.Done ? "destructive" : "default"}
+                                    variant={matchSingle.Done ? "destructive" : (matchSingle.ThisWeek ? "default" : "outline")}
                                 >
-                                    {matchSingle.Done ? "Conclusa" : "In programma"}
+                                    {matchSingle.Done ? "Conclusa" :  (matchSingle.ThisWeek ? "Prossima" : "In programma")}
                                 </Badge>
                             </div>
 
