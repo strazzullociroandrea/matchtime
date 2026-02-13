@@ -116,6 +116,15 @@ export default function Home() {
                 L&apos;autore
                 non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare
                 sempre il portale ufficiale per le comunicazioni formali.
+                <span className="block mt-2 font-bold">
+                    Last updated: {new Date().toLocaleDateString("it-IT", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            })}
+                </span>
             </footer>
         </div>
 
