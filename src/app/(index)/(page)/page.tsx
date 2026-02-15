@@ -7,9 +7,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {MapPin, Calendar, Clock, ChevronRight} from "lucide-react";
+import {MapPin, Calendar, Clock, ChevronRight, Download} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {cn} from "@/lib/utils";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { CalendarPDF } from "@/components/pdf-match";
 
 export default function Home() {
     const {data: matches, isLoading} = api.orarioRouter.getInfo.useQuery();
@@ -39,8 +41,25 @@ export default function Home() {
             <header className="mb-10 text-center sticky top-0 z-50 bg-background/90 backdrop-blur-sm rounded-lg py-4">
                 <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-2">Calendario Partite</h1>
                 {/*Da settare ad ogni cambio stagione/categoria*/}
-                <p className="text-muted-foreground italic">Sfoglia le partite
-                    dell&apos;anno {new Date().getFullYear()} - Categoria U15 Maschile BBV</p>
+                <div>
+                    <p className="text-muted-foreground italic">Sfoglia le partite
+                    dell&apos;anno {new Date().getFullYear()} - Categoria U15 Maschile</p>
+                    {matches && matches.length > 0 && (
+                    <PDFDownloadLink
+                        document={<CalendarPDF matches={matches} />}
+                        fileName={`calendario_u15_Maschile_${new Date().getFullYear()}.pdf`}
+                        className="inline-flex items-center mt-2 text-primary font-medium hover:underline gap-2"
+                    >
+                        {({ loading }) => (
+                            <>
+                                <Download className={cn("w-5 h-5", loading && "animate-bounce")} />
+                                {loading ? "Generazione PDF..." : "Scarica PDF"}
+                            </>
+                        )}
+                    </PDFDownloadLink>
+                    )}
+                </div> 
+                
             </header>
 
             <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
