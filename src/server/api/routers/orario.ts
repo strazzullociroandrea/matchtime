@@ -7,7 +7,6 @@ import {type Page, type Browser} from "puppeteer";
 import ExcelJS from 'exceljs';
 import {unstable_cache} from 'next/cache';
 
-
 /**
  * Interface representing a volleyball match, containing details such as the matchday, number, date, time, home team, away team, and address.
  */
@@ -347,5 +346,10 @@ export const orarioRouter = createTRPCRouter({
                     cause: err,
                 });
             }
-        }) 
+    }),
+    getCategory: publicProcedure
+        .query(() => {
+            return process.env.CATEGORY_TARGET!;
+    }),
+     
 });
