@@ -2,15 +2,25 @@
 
 import { api } from "@/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, Clock, ChevronRight, Download } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Clock,
+  ChevronRight,
+  Download,
+  Info,
+  X,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { CalendarPDF } from "@/components/pdf-match";
-
+import { useState } from "react";
 export default function Home() {
+  const [showInfo, setShowInfo] = useState(false);
   const { data, isLoading } = api.orarioRouter.getInfo.useQuery();
   const category = api.orarioRouter.getCategory.useQuery();
+  const team = api.orarioRouter.getTeam.useQuery();
 
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
@@ -36,11 +46,101 @@ export default function Home() {
 
   return (
     <>
-      <header className="sticky mb-6 mt-5 top-0 z-50 w-full  bg-background px-4 py-4 text-center shadow-sm">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-2">
-          Calendario Partite
-        </h1>
-        {/*Da settare ad ogni cambio stagione/categoria*/}
+      {/* Info banner */}
+      {showInfo && (
+        <>
+          {/* Overlay - Corretto z-index */}
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] animate-in fade-in duration-300"
+            onClick={() => setShowInfo(false)}
+          />
+
+          {/* Popup - Corretto z-index e struttura */}
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-in zoom-in-95 duration-300">
+            <Card className="relative overflow-hidden bg-white/95 dark:bg-slate-950/95 border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg mx-auto backdrop-blur-md">
+              {/* Barra laterale di accento */}
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-primary" />
+
+              <CardContent className="p-8 pl-10">
+                <div className="flex flex-col gap-6">
+                  {/* Header del messaggio */}
+                  <div className="space-y-1">
+                    <span className="text-primary font-bold text-[10px] uppercase tracking-[0.2em] mb-2 block">
+                      Benvenuto su
+                    </span>
+                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
+                      Match Time<span className="text-primary">.</span>
+                    </h2>
+                  </div>
+
+                  {/* Corpo del testo - Diviso in sezioni per leggibilità */}
+                  <div className="space-y-4 text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+                    <p>
+                      Il portale dedicato alla categoria{" "}
+                      <span className="text-slate-900 dark:text-white font-semibold">
+                        {category.data}
+                      </span>{" "}
+                      dei{" "}
+                      <span className="text-slate-900 dark:text-white font-semibold">
+                        {team.data}
+                      </span>
+                      .
+                    </p>
+
+                    <ul className="space-y-2">
+                      <li className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span>Scopri date, orari e luoghi delle partite</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span>Posizione esatta su mappa con un click</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span>Scarica il calendario completo in PDF</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Footer con pulsante centrato - Corretto items-center */}
+                  <div className="mt-2 flex flex-col items-center">
+                    <button
+                      onClick={() => setShowInfo(false)}
+                      className="w-full sm:w-2/3 bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all"
+                    >
+                      Inizia a navigare
+                    </button>
+                    <p className="mt-4 text-[10px] text-slate-400 uppercase tracking-tight">
+                      Questo sito è un progetto indipendente e non ufficiale. I
+                      dati dei calendari sono di proprietà di PGS (Polisportive
+                      Giovanili Salesiane), recuperati tramite file excel reso
+                      disponbile dagli stessi. L&apos;autore non si assume
+                      responsabilità per eventuali inesattezze o cambiamenti di
+                      orario non riportati. Consultare sempre il portale
+                      ufficiale per le comunicazioni formali.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
+
+      <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background px-4 py-4 text-center shadow-sm">
+        {/* Contenitore Flex per Icona + Titolo */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <Info
+            className="w-5 h-5 text-primary opacity-80 shrink-0"
+            onClick={() => setShowInfo(true)}
+          />
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Calendario Partite
+          </h1>
+        </div>
+
+        {/* Sottotitolo e PDF */}
         <div>
           <p className="text-muted-foreground italic">
             Sfoglia le partite dell&apos;anno {new Date().getFullYear()} -
