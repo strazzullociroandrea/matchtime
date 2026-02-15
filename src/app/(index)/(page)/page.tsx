@@ -37,8 +37,8 @@ export default function Home() {
     }
 
     return (
-        <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
-            <header className="mb-10 text-center sticky top-0 z-50 bg-background/90 backdrop-blur-sm rounded-lg py-4">
+        <>
+        <header className="sticky mb-6 top-0 z-50 w-full  bg-background px-4 py-4 text-center shadow-sm">
                 <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-2">Calendario Partite</h1>
                 {/*Da settare ad ogni cambio stagione/categoria*/}
                 <div>
@@ -61,6 +61,8 @@ export default function Home() {
                 </div> 
                 
             </header>
+        <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
+            
 
             <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
                 {data?.matches?.map((matchSingle, index) => (
@@ -141,6 +143,6 @@ export default function Home() {
                 </span>
             </footer>
         </div>
-
+</>
     );
 }
