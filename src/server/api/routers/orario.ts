@@ -6,22 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { type Page, type Browser } from "puppeteer";
 import ExcelJS from "exceljs";
 import { unstable_cache } from "next/cache";
-
-/**
- * Interface representing a volleyball match, containing details such as the matchday, number, date, time, home team, away team, and address.
- */
-interface PartitaVolley {
-  Giornata: string | number;
-  Numero: string | number;
-  Data: string;
-  Ora: string;
-  Casa: string;
-  Trasferta: string;
-  Indirizzo: string;
-  Done: boolean;
-  ThisWeek: boolean;
-  IsHome: boolean;
-}
+import { PartitaVolley } from "@/lib/schemas/match-schema";
 
 /**
  * Function that wraps a job with start and end messages, useful for logging and user feedback. The job can be synchronous or asynchronous.

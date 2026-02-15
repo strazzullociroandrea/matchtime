@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Download,
   Info,
-  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -33,7 +32,7 @@ export default function Home() {
     return `https://www.google.com/maps/search/?api=1&query=${query}`;
   };
 
-  if (isLoading) {
+  if (isLoading || !data || !category.data || !team.data) {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
         <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full shadow-md"></div>
@@ -49,23 +48,19 @@ export default function Home() {
       {/* Info banner */}
       {showInfo && (
         <>
-          {/* Overlay - Corretto z-index */}
           <div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] animate-in fade-in duration-300"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-60 animate-in fade-in duration-300"
             onClick={() => setShowInfo(false)}
           />
 
-          {/* Popup - Corretto z-index e struttura */}
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-in zoom-in-95 duration-300">
+          <div className="fixed inset-0 z-70 flex items-center justify-center p-4 animate-in zoom-in-95 duration-300">
             <Card className="relative overflow-hidden bg-white/95 dark:bg-slate-950/95 border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg mx-auto backdrop-blur-md">
-              {/* Barra laterale di accento */}
               <div className="absolute top-0 left-0 w-1.5 h-full bg-primary" />
 
               <CardContent className="p-8 pl-10">
                 <div className="flex flex-col gap-6">
-                  {/* Header del messaggio */}
                   <div className="space-y-1">
-                    <span className="text-primary font-bold text-[10px] uppercase tracking-[0.2em] mb-2 block">
+                    <span className="text-primary font-bold text-xs uppercase tracking-widest mb-2 block">
                       Benvenuto su
                     </span>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
@@ -73,7 +68,6 @@ export default function Home() {
                     </h2>
                   </div>
 
-                  {/* Corpo del testo - Diviso in sezioni per leggibilità */}
                   <div className="space-y-4 text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
                     <p>
                       Il portale dedicato alla categoria{" "}
@@ -103,7 +97,6 @@ export default function Home() {
                     </ul>
                   </div>
 
-                  {/* Footer con pulsante centrato - Corretto items-center */}
                   <div className="mt-2 flex flex-col items-center">
                     <button
                       onClick={() => setShowInfo(false)}
@@ -111,7 +104,7 @@ export default function Home() {
                     >
                       Inizia a navigare
                     </button>
-                    <p className="mt-4 text-[10px] text-slate-400 uppercase tracking-tight">
+                    <p className="mt-4 text-xs text-slate-400  tracking-tight">
                       Questo sito è un progetto indipendente e non ufficiale. I
                       dati dei calendari sono di proprietà di PGS (Polisportive
                       Giovanili Salesiane), recuperati tramite file excel reso
@@ -129,7 +122,6 @@ export default function Home() {
       )}
 
       <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background px-4 py-4 text-center shadow-sm">
-        {/* Contenitore Flex per Icona + Titolo */}
         <div className="flex items-center justify-center gap-3 mb-2">
           <Info
             className="w-5 h-5 text-primary opacity-80 shrink-0"
@@ -140,7 +132,6 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Sottotitolo e PDF */}
         <div>
           <p className="text-muted-foreground italic">
             Sfoglia le partite dell&apos;anno {new Date().getFullYear()} -
@@ -148,8 +139,14 @@ export default function Home() {
           </p>
           {data && data.matches && data.matches.length > 0 && (
             <PDFDownloadLink
-              document={<CalendarPDF matches={data.matches} />}
-              fileName={`calendario_u15_Maschile_${new Date().getFullYear()}.pdf`}
+              document={
+                <CalendarPDF
+                  matches={data.matches}
+                  category={category.data}
+                  team={team.data}
+                />
+              }
+              fileName={`calendario_${category.data}_${team.data}.pdf`}
               className="inline-flex items-center mt-2 text-primary font-medium hover:underline gap-2"
             >
               {({ loading }) => (
