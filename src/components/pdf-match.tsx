@@ -57,7 +57,13 @@ export const CalendarPDF = ({ matches }: { matches: any[] }) => (
                     <View style={[styles.tableCol, styles.colLarge]}><Text style={[styles.tableCell, styles.bold]}>Indirizzo</Text></View>
                 </View>
                 {/*Table rows*/}
-                {matches.map((match, index) => (
+                {
+                matches.length === 0 ? (
+                    <View style={styles.tableRow}>
+                        <View style={[styles.tableCol, { width: '100%' }]}><Text style={styles.tableCell}>Nessuna partita trovata</Text></View>
+                    </View>
+                ) :
+                matches.map((match, index) => (
                     <View key={index} style={[styles.tableRow, match.IsHome ? styles.isHome : {}, match.Done ? styles.done : {}]}>
                         <View style={[styles.tableCol, styles.colSmall]}><Text style={styles.tableCell}>{match.Done ? "Conclusa" :  (match.ThisWeek ? "Prossima" : "In programma")}</Text></View>
                         <View style={[styles.tableCol, styles.colMedium]}><Text style={styles.tableCell}>{match.Data} {match.Ora}</Text></View>
