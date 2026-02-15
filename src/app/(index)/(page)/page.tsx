@@ -14,7 +14,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { CalendarPDF } from "@/components/pdf-match";
 
 export default function Home() {
-    const {data: matches, isLoading} = api.orarioRouter.getInfo.useQuery();
+    const {data, isLoading} = api.orarioRouter.getInfo.useQuery(); 
 
     const getNavigationLink = (place: string) => {
         const query = encodeURIComponent(place);
@@ -44,9 +44,9 @@ export default function Home() {
                 <div>
                     <p className="text-muted-foreground italic">Sfoglia le partite
                     dell&apos;anno {new Date().getFullYear()} - Categoria U15 Maschile</p>
-                    {matches && matches.length > 0 && (
+                    {data && data.matches && data.matches.length > 0 && (
                     <PDFDownloadLink
-                        document={<CalendarPDF matches={matches} />}
+                        document={<CalendarPDF matches={data.matches} />}
                         fileName={`calendario_u15_Maschile_${new Date().getFullYear()}.pdf`}
                         className="inline-flex items-center mt-2 text-primary font-medium hover:underline gap-2"
                     >
@@ -63,7 +63,7 @@ export default function Home() {
             </header>
 
             <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
-                {matches?.map((matchSingle, index) => (
+                {data?.matches?.map((matchSingle, index) => (
                     <Card
                         key={index}
                         className={cn(
@@ -137,13 +137,7 @@ export default function Home() {
                 non si assume responsabilità per eventuali inesattezze o cambiamenti di orario non riportati. Consultare
                 sempre il portale ufficiale per le comunicazioni formali.
                 <span className="block mt-2 font-bold">
-                    Last updated: {new Date().toLocaleDateString("it-IT", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-            })}
+                    Last updated: {data?.lastUpdate? new Date(data.lastUpdate).toLocaleString('it-IT') : "N/A"}
                 </span>
             </footer>
         </div>

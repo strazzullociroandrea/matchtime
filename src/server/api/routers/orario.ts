@@ -34,17 +34,18 @@ interface PartitaVolley {
  * @return The result of the job, if it returns a value or a Promise that resolves to a value
  */
 const jobWithMessage = async <T>(startMessage: string, job: () => T | Promise<T>, endMessage: string) => {
+    const formattedDate = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     try {
-        console.log(`[LOG] ${startMessage}`);
+        console.log(`${formattedDate} - [LOG] ${startMessage}`);
         const result = await job();
-        console.log(`[LOG] ${endMessage}`);
+        console.log(`${formattedDate} - [LOG] ${endMessage}`);
         return result;
     } catch (e) {
         if (e instanceof TRPCError) {
-            console.error(`[ERROR] tRPC Error: ${e.message},\ncause: ${e.cause}`);
+            console.error(`${formattedDate} - [ERROR] tRPC Error: ${e.message},\ncause: ${e.cause}`);
             throw e;
         }
-        console.log("[ERROR] Error during job execution: " + e);
+        console.log(`${formattedDate} - [ERROR] Error during job execution: ${e}`);
         throw new Error(`Error during job execution: ${e}`,
             {cause: e instanceof Error ? e : undefined});
 
@@ -283,8 +284,8 @@ const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
         return a.Done ? 1 : -1;
     })
 }
-let isWorking = false;
 
+let isWorking = false; 
 /**
  * tRPC router for handling requests related to retrieving volleyball match information. It defines a single procedure `getInfo` that performs the entire process of opening a browser, navigating to the specified URL, setting the category and team, downloading the Excel file, and processing it to extract the relevant data.
  */
@@ -318,7 +319,8 @@ export const orarioRouter = createTRPCRouter({
                         }
 
                         const orderedMatches = orderByStatus(matches);
-                        return orderedMatches;
+                        const lastUpdate = new Date();
+                        return { matches: orderedMatches, lastUpdate };
                     } finally {
                         isWorking = false;
                     }
@@ -331,7 +333,11 @@ export const orarioRouter = createTRPCRouter({
             );
 
             try {
-                return await getCachedMatches();
+                return await jobWithMessage("Starting data retrieval process...", async () => {
+                    const data = await getCachedMatches();
+                    return data;
+                }, "Data retrieval process completed successfully");
+
             } catch (err) {
                 if (err instanceof TRPCError) throw err;
 
@@ -341,5 +347,5 @@ export const orarioRouter = createTRPCRouter({
                     cause: err,
                 });
             }
-        })
+        }) 
 });
