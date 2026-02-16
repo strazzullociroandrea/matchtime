@@ -1,13 +1,13 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import puppeteer from "puppeteer";
-import path from "path";
-import fs from "fs";
 import { TRPCError } from "@trpc/server";
-import { type Page, type Browser } from "puppeteer";
 import ExcelJS from "exceljs";
+import fs from "fs";
 import { unstable_cache } from "next/cache";
-import { PartitaVolley } from "@/lib/schemas/match-schema";
+import path from "path";
+import puppeteer, { type Browser, type Page } from "puppeteer";
+import { z } from "zod";
 import { env } from "@/env";
+import { MatchSchema, type PartitaVolley } from "@/lib/schemas/match-schema";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
 /**
  * Function that wraps a job with start and end messages, useful for logging and user feedback. The job can be synchronous or asynchronous.
@@ -59,7 +59,7 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
     const browser: Browser = await puppeteer.launch({
       headless: true,
       args: [
-        "--no-sandbox",
+        "no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
@@ -266,18 +266,16 @@ const readFile = async (
       };
 
       const partita: PartitaVolley = {
-        Giornata: getVal(1),
-        Numero: getVal(2),
-        Data: getVal(3),
-        Ora: getVal(4),
-        Casa: getVal(5),
-        Trasferta: getVal(6),
-        Indirizzo: getVal(7),
-        Done: isDayPassed(getVal(3)),
-        ThisWeek: thisWeek(getVal(3)),
-        IsHome:
-          getVal(7).toLowerCase() ===
-          env.HOME_TEAM_PLACE!.toLowerCase(),
+        giornata: getVal(1),
+        numero: getVal(2),
+        data: getVal(3),
+        ora: getVal(4),
+        casa: getVal(5),
+        trasferta: getVal(6),
+        indirizzo: getVal(7),
+        done: isDayPassed(getVal(3)),
+        thisWeek: thisWeek(getVal(3)),
+        isHome: getVal(7).toLowerCase() === env.HOME_TEAM_PLACE!.toLowerCase(),
       };
 
       match.push(partita);
@@ -294,78 +292,93 @@ const readFile = async (
  */
 const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
   return matches.sort((a, b) => {
-    if (a.Done === b.Done) return 0;
-    return a.Done ? 1 : -1;
+    if (a.done === b.done) return 0;
+    return a.done ? 1 : -1;
   });
 };
 
 let isWorking = false;
 /**
+ * Function to fetch and cache the match data. It uses the unstable_cache function to cache the results for 24 hours and prevent multiple simultaneous requests.
+ * @returns A Promise that resolves to an object containing the matches, last update time, team, and category.
+ * @throws TRPCError if there is an error during the data retrieval process or if a request is already in progress.
+ */
+const fetchAndCacheMatches = unstable_cache(
+  async () => {
+    // Nota: isWorking deve essere una variabile let definita fuori
+    if (isWorking) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Recupero dati in corso. Riprova tra poco.",
+      });
+    }
+
+    try {
+      isWorking = true;
+      const downloadPath = path.join(process.cwd(), "public", "download");
+      if (!fs.existsSync(downloadPath))
+        fs.mkdirSync(downloadPath, { recursive: true });
+
+      const page = await openBrowser(downloadPath);
+      const fileName = await getExcel(page, downloadPath);
+      const matches = await readFile(downloadPath, fileName);
+
+      try {
+        fs.unlinkSync(path.join(downloadPath, fileName));
+      } catch (e) {}
+
+      // RESTITUIAMO UN OGGETTO SERIALIZZABILE (Data come stringa ISO)
+      return {
+        matches: orderByStatus(matches),
+        lastUpdate: new Date().toISOString(), // <--- STRINGA, NON DATE
+        team: env.TEAM_CATEGORY,
+        category: env.CATEGORY_TARGET,
+      };
+    } finally {
+      isWorking = false;
+    }
+  },
+  ["volleyball-matches-data"],
+  { revalidate: 86400, tags: ["matches"] },
+);
+
+/**
  * tRPC router for handling requests related to retrieving volleyball match information. It defines a single procedure `getInfo` that performs the entire process of opening a browser, navigating to the specified URL, setting the category and team, downloading the Excel file, and processing it to extract the relevant data.
  */
 export const orarioRouter = createTRPCRouter({
-  getInfo: publicProcedure.query(async () => {
-    const getCachedMatches = unstable_cache(
-      async () => {
-        if (isWorking) {
-          throw new TRPCError({
-            code: "TOO_MANY_REQUESTS",
-            message: "Data retrieval in progress. Please try again later.",
-          });
-        }
+  getInfo: publicProcedure
+    .input(z.void())
+    .output(
+      z.object({
+        matches: z.array(MatchSchema),
+        lastUpdate: z.string(),
+        team: z.string(),
+        category: z.string(),
+      }),
+    )
+    .query(async () => {
+      try {
+        return await jobWithMessage(
+          "Starting data retrieval process...",
+          async () => {
+            return await jobWithMessage(
+              "Fetching and caching matches...",
+              async () => {
+                return await fetchAndCacheMatches();
+              },
+              "Matches fetched and cached successfully",
+            );
+          },
+          "Data retrieval process completed successfully",
+        );
+      } catch (err) {
+        if (err instanceof TRPCError) throw err;
 
-        try {
-          isWorking = true;
-
-          const downloadPath = path.join(process.cwd(), "public", "download");
-          if (!fs.existsSync(downloadPath))
-            fs.mkdirSync(downloadPath, { recursive: true });
-
-          const page = await openBrowser(downloadPath);
-          const fileName = await getExcel(page, downloadPath);
-          const matches = await readFile(downloadPath, fileName);
-
-          try {
-            fs.unlinkSync(path.join(downloadPath, fileName));
-          } catch (e) {}
-
-          const orderedMatches = orderByStatus(matches);
-          const lastUpdate = new Date();
-          return { matches: orderedMatches, lastUpdate };
-        } finally {
-          isWorking = false;
-        }
-      },
-      ["volleyball-matches-data"],
-      {
-        revalidate: 86400,
-        tags: ["matches"],
-      },
-    );
-
-    try {
-      return await jobWithMessage(
-        "Starting data retrieval process...",
-        async () => {
-          const data = await getCachedMatches();
-          return data;
-        },
-        "Data retrieval process completed successfully",
-      );
-    } catch (err) {
-      if (err instanceof TRPCError) throw err;
-
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve match data.",
-        cause: err,
-      });
-    }
-  }),
-  getCategory: publicProcedure.query(() => {
-    return env.CATEGORY_TARGET!;
-  }),
-  getTeam: publicProcedure.query(() => {
-    return env.TEAM_CATEGORY!;
-  }),
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to retrieve match data.",
+          cause: err,
+        });
+      }
+    }),
 });
