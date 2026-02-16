@@ -1,13 +1,13 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import puppeteer from "puppeteer";
-import path from "path";
-import fs from "fs";
 import { TRPCError } from "@trpc/server";
-import { type Page, type Browser } from "puppeteer";
 import ExcelJS from "exceljs";
+import fs from "fs";
 import { unstable_cache } from "next/cache";
-import { PartitaVolley } from "@/lib/schemas/match-schema";
+import path from "path";
+import puppeteer, { type Browser, type Page } from "puppeteer";
+import { z } from "zod";
 import { env } from "@/env";
+import { MatchSchema, type PartitaVolley } from "@/lib/schemas/match-schema";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
 /**
  * Function that wraps a job with start and end messages, useful for logging and user feedback. The job can be synchronous or asynchronous.
@@ -19,32 +19,32 @@ import { env } from "@/env";
  * @return The result of the job, if it returns a value or a Promise that resolves to a value
  */
 const jobWithMessage = async <T>(
-  startMessage: string,
-  job: () => T | Promise<T>,
-  endMessage: string,
+	startMessage: string,
+	job: () => T | Promise<T>,
+	endMessage: string,
 ) => {
-  const formattedDate = new Date().toLocaleTimeString("it-IT", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-  try {
-    console.log(`${formattedDate} - [LOG] ${startMessage}`);
-    const result = await job();
-    console.log(`${formattedDate} - [LOG] ${endMessage}`);
-    return result;
-  } catch (e) {
-    if (e instanceof TRPCError) {
-      console.error(
-        `${formattedDate} - [ERROR] tRPC Error: ${e.message},\ncause: ${e.cause}`,
-      );
-      throw e;
-    }
-    console.log(`${formattedDate} - [ERROR] Error during job execution: ${e}`);
-    throw new Error(`Error during job execution: ${e}`, {
-      cause: e instanceof Error ? e : undefined,
-    });
-  }
+	const formattedDate = new Date().toLocaleTimeString("it-IT", {
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+	});
+	try {
+		console.log(`${formattedDate} - [LOG] ${startMessage}`);
+		const result = await job();
+		console.log(`${formattedDate} - [LOG] ${endMessage}`);
+		return result;
+	} catch (e) {
+		if (e instanceof TRPCError) {
+			console.error(
+				`${formattedDate} - [ERROR] tRPC Error: ${e.message},\ncause: ${e.cause}`,
+			);
+			throw e;
+		}
+		console.log(`${formattedDate} - [ERROR] Error during job execution: ${e}`);
+		throw new Error(`Error during job execution: ${e}`, {
+			cause: e instanceof Error ? e : undefined,
+		});
+	}
 };
 
 /**
@@ -55,31 +55,30 @@ const jobWithMessage = async <T>(
  * @throws TRPCError if there is an error during the browser opening process
  */
 const openBrowser = async (downloadPath: string): Promise<Page> => {
-  try {
-    const browser: Browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-      ],
-    });
-    const page: Page = await browser.newPage();
+	try {
+		const browser: Browser = await puppeteer.launch({
+			headless: true,
+			args: [
+				"--disable-setuid-sandbox",
+				"--disable-dev-shm-usage",
+				"--disable-gpu",
+			],
+		});
+		const page: Page = await browser.newPage();
 
-    const client = await page.createCDPSession();
-    await client.send("Page.setDownloadBehavior", {
-      behavior: "allow",
-      downloadPath: downloadPath,
-    });
-    return page;
-  } catch (err) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to open browser.",
-      cause: err,
-    });
-  }
+		const client = await page.createCDPSession();
+		await client.send("Page.setDownloadBehavior", {
+			behavior: "allow",
+			downloadPath: downloadPath,
+		});
+		return page;
+	} catch (err) {
+		throw new TRPCError({
+			code: "INTERNAL_SERVER_ERROR",
+			message: "Failed to open browser.",
+			cause: err,
+		});
+	}
 };
 
 /**
@@ -91,98 +90,98 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
  * @returns A Promise that resolves when the data retrieval process is complete
  */
 const getExcel = async (page: Page, downloadPath: string) => {
-  try {
-    await page.goto(env.URL_DOWNLOAD_SITE!, {
-      waitUntil: "networkidle2",
-    });
+	try {
+		await page.goto(env.URL_DOWNLOAD_SITE!, {
+			waitUntil: "networkidle2",
+		});
 
-    await jobWithMessage(
-      "Setting category...",
-      async () => {
-        try {
-          const categorySelector = "#available-categorie";
-          await page.click(categorySelector);
-          const targetCategory = env.CATEGORY_TARGET;
-          const categoryOption = `li[role="option"] ::-p-text(${targetCategory})`;
-          await page.waitForSelector(categoryOption, {
-            visible: true,
-            timeout: 5000,
-          });
-          await page.click(categoryOption);
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          await page.waitForNetworkIdle();
-        } catch (err) {
-          throw new Error("Error setting category: " + err);
-        }
-      },
-      "Category set successfully",
-    );
+		await jobWithMessage(
+			"Setting category...",
+			async () => {
+				try {
+					const categorySelector = "#available-categorie";
+					await page.click(categorySelector);
+					const targetCategory = env.CATEGORY_TARGET;
+					const categoryOption = `li[role="option"] ::-p-text(${targetCategory})`;
+					await page.waitForSelector(categoryOption, {
+						visible: true,
+						timeout: 5000,
+					});
+					await page.click(categoryOption);
+					await new Promise((resolve) => setTimeout(resolve, 2000));
+					await page.waitForNetworkIdle();
+				} catch (err) {
+					throw new Error("Error setting category: " + err);
+				}
+			},
+			"Category set successfully",
+		);
 
-    await jobWithMessage(
-      "Setting team...",
-      async () => {
-        try {
-          const teamSelector = "#available-teams";
-          const targetSquadra = env.TEAM_CATEGORY!;
-          console.log("Ricerca squadra: " + targetSquadra);
-          await page.type(teamSelector, targetSquadra, { delay: 100 });
-          const squadraOption = `li.MuiAutocomplete-option ::-p-text(${targetSquadra})`;
-          await page.waitForSelector(squadraOption, {
-            visible: true,
-            timeout: 5000,
-          });
-          await page.click(squadraOption);
-        } catch (err) {
-          throw new Error("Error setting team: " + err);
-        }
-      },
-      "Team set successfully",
-    );
+		await jobWithMessage(
+			"Setting team...",
+			async () => {
+				try {
+					const teamSelector = "#available-teams";
+					const targetSquadra = env.TEAM_CATEGORY!;
+					console.log("Ricerca squadra: " + targetSquadra);
+					await page.type(teamSelector, targetSquadra, { delay: 100 });
+					const squadraOption = `li.MuiAutocomplete-option ::-p-text(${targetSquadra})`;
+					await page.waitForSelector(squadraOption, {
+						visible: true,
+						timeout: 5000,
+					});
+					await page.click(squadraOption);
+				} catch (err) {
+					throw new Error("Error setting team: " + err);
+				}
+			},
+			"Team set successfully",
+		);
 
-    return await jobWithMessage(
-      "Downloading data...",
-      async () => {
-        const button = await page.waitForSelector(
-          'xpath///button[contains(., "Scarica Excel")]',
-        );
-        if (!button) throw new Error("Download button not found");
-        await button.click();
+		return await jobWithMessage(
+			"Downloading data...",
+			async () => {
+				const button = await page.waitForSelector(
+					'xpath///button[contains(., "Scarica Excel")]',
+				);
+				if (!button) throw new Error("Download button not found");
+				await button.click();
 
-        return await jobWithMessage(
-          "Waiting for file to download...",
-          async () => {
-            await new Promise((res) => setTimeout(res, 5000));
-            try {
-              const files = fs.readdirSync(downloadPath);
+				return await jobWithMessage(
+					"Waiting for file to download...",
+					async () => {
+						await new Promise((res) => setTimeout(res, 5000));
+						try {
+							const files = fs.readdirSync(downloadPath);
 
-              const validFiles = files.filter(
-                (f) =>
-                  !f.startsWith(".") &&
-                  (f.endsWith(".xlsx") || f.includes("xlsx")),
-              );
+							const validFiles = files.filter(
+								(f) =>
+									!f.startsWith(".") &&
+									(f.endsWith(".xlsx") || f.includes("xlsx")),
+							);
 
-              const fileName = validFiles[0] as string;
-              return fileName;
-            } catch (e) {
-              throw new Error(
-                `Error during file processing: ${e instanceof Error ? e.message : e}`,
-              );
-            }
-          },
-          "File downloaded successfully",
-        );
-      },
-      "Data downloaded successfully",
-    );
-  } catch (err) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed get data.",
-      cause: err,
-    });
-  } finally {
-    await page.close();
-  }
+							const fileName = validFiles[0] as string;
+							return fileName;
+						} catch (e) {
+							throw new Error(
+								`Error during file processing: ${e instanceof Error ? e.message : e}`,
+							);
+						}
+					},
+					"File downloaded successfully",
+				);
+			},
+			"Data downloaded successfully",
+		);
+	} catch (err) {
+		throw new TRPCError({
+			code: "INTERNAL_SERVER_ERROR",
+			message: "Failed get data.",
+			cause: err,
+		});
+	} finally {
+		await page.close();
+	}
 };
 
 /**
@@ -191,10 +190,10 @@ const getExcel = async (page: Page, downloadPath: string) => {
  * @return A boolean value indicating whether the match date has already passed (true) or is still upcoming (false)
  */
 const isDayPassed = (dateStr: string): boolean => {
-  const [day, month, year] = dateStr.split("/").map(Number);
-  const matchDate = new Date(year, month - 1, day);
-  const today = new Date();
-  return matchDate < today;
+	const [day, month, year] = dateStr.split("/").map(Number);
+	const matchDate = new Date(year, month - 1, day);
+	const today = new Date();
+	return matchDate < today;
 };
 
 /**
@@ -203,17 +202,17 @@ const isDayPassed = (dateStr: string): boolean => {
  * @returns A boolean value indicating whether the match date is in the current week (true) or not (false)
  */
 const thisWeek = (dateStr: string): boolean => {
-  const today = new Date();
-  const todayDay = today.getDate();
-  const todayMonth = today.getMonth() + 1;
-  const todayYear = today.getFullYear();
-  const [day, month, year] = dateStr.split("/").map(Number);
+	const today = new Date();
+	const todayDay = today.getDate();
+	const todayMonth = today.getMonth() + 1;
+	const todayYear = today.getFullYear();
+	const [day, month, year] = dateStr.split("/").map(Number);
 
-  const sameYear: boolean = year === todayYear;
-  const sameMonth: boolean = month === todayMonth;
-  const sameWeek: boolean = Math.abs(day - todayDay) <= 7;
+	const sameYear: boolean = year === todayYear;
+	const sameMonth: boolean = month === todayMonth;
+	const sameWeek: boolean = Math.abs(day - todayDay) <= 7;
 
-  return sameYear && sameMonth && sameWeek;
+	return sameYear && sameMonth && sameWeek;
 };
 /**
  * Function to read the downloaded Excel file, extract the relevant data, and return it as an array of PartitaVolley objects.
@@ -224,67 +223,65 @@ const thisWeek = (dateStr: string): boolean => {
  * @throws Error if the file is not found, is empty, or if there is an error during file processing
  */
 const readFile = async (
-  downloadPath: string,
-  fileName: string,
+	downloadPath: string,
+	fileName: string,
 ): Promise<PartitaVolley[]> => {
-  const fullPath = path.join(downloadPath, fileName);
-  let ready = false;
+	const fullPath = path.join(downloadPath, fileName);
+	let ready = false;
 
-  for (let i = 0; i < 10; i++) {
-    if (fs.existsSync(fullPath) && fs.statSync(fullPath).size > 0) {
-      ready = true;
-      break;
-    }
-    await new Promise((res) => setTimeout(res, 1000));
-  }
+	for (let i = 0; i < 10; i++) {
+		if (fs.existsSync(fullPath) && fs.statSync(fullPath).size > 0) {
+			ready = true;
+			break;
+		}
+		await new Promise((res) => setTimeout(res, 1000));
+	}
 
-  if (!ready) throw new Error("File not found or empty");
+	if (!ready) throw new Error("File not found or empty");
 
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(fullPath);
-  const worksheet = workbook.getWorksheet(1);
+	const workbook = new ExcelJS.Workbook();
+	await workbook.xlsx.readFile(fullPath);
+	const worksheet = workbook.getWorksheet(1);
 
-  if (!worksheet) throw new Error("Internal error: Worksheet not found");
+	if (!worksheet) throw new Error("Internal error: Worksheet not found");
 
-  const match: PartitaVolley[] = [];
+	const match: PartitaVolley[] = [];
 
-  worksheet.eachRow((row, rowNumber) => {
-    if (rowNumber > 3) {
-      const getVal = (col: number): string => {
-        const cell = row.getCell(col).value;
+	worksheet.eachRow((row, rowNumber) => {
+		if (rowNumber > 3) {
+			const getVal = (col: number): string => {
+				const cell = row.getCell(col).value;
 
-        if (cell === null || cell === undefined) return "";
+				if (cell === null || cell === undefined) return "";
 
-        if (typeof cell === "object" && "result" in cell) {
-          return String(cell.result ?? "").trim();
-        }
-        if (cell instanceof Date) {
-          return cell.toLocaleDateString("it-IT");
-        }
+				if (typeof cell === "object" && "result" in cell) {
+					return String(cell.result ?? "").trim();
+				}
+				if (cell instanceof Date) {
+					return cell.toLocaleDateString("it-IT");
+				}
 
-        return String(cell).trim();
-      };
+				return String(cell).trim();
+			};
 
-      const partita: PartitaVolley = {
-        Giornata: getVal(1),
-        Numero: getVal(2),
-        Data: getVal(3),
-        Ora: getVal(4),
-        Casa: getVal(5),
-        Trasferta: getVal(6),
-        Indirizzo: getVal(7),
-        Done: isDayPassed(getVal(3)),
-        ThisWeek: thisWeek(getVal(3)),
-        IsHome:
-          getVal(7).toLowerCase() ===
-          env.HOME_TEAM_PLACE!.toLowerCase(),
-      };
+			const partita: PartitaVolley = {
+				giornata: getVal(1),
+				numero: getVal(2),
+				data: getVal(3),
+				ora: getVal(4),
+				casa: getVal(5),
+				trasferta: getVal(6),
+				indirizzo: getVal(7),
+				done: isDayPassed(getVal(3)),
+				thisWeek: thisWeek(getVal(3)),
+				isHome: getVal(7).toLowerCase() === env.HOME_TEAM_PLACE!.toLowerCase(),
+			};
 
-      match.push(partita);
-    }
-  });
+			match.push(partita);
+		}
+	});
 
-  return match;
+	return match;
 };
 
 /**
@@ -293,79 +290,94 @@ const readFile = async (
  * @returns A sorted array of PartitaVolley objects.
  */
 const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
-  return matches.sort((a, b) => {
-    if (a.Done === b.Done) return 0;
-    return a.Done ? 1 : -1;
-  });
+	return matches.sort((a, b) => {
+		if (a.done === b.done) return 0;
+		return a.done ? 1 : -1;
+	});
 };
 
 let isWorking = false;
 /**
+ * Function to fetch and cache the match data. It uses the unstable_cache function to cache the results for 24 hours and prevent multiple simultaneous requests.
+ * @returns A Promise that resolves to an object containing the matches, last update time, team, and category.
+ * @throws TRPCError if there is an error during the data retrieval process or if a request is already in progress.
+ */
+const fetchAndCacheMatches = unstable_cache(
+	async () => {
+		// Nota: isWorking deve essere una variabile let definita fuori
+		if (isWorking) {
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: "Recupero dati in corso. Riprova tra poco.",
+			});
+		}
+
+		try {
+			isWorking = true;
+			const downloadPath = path.join(process.cwd(), "public", "download");
+			if (!fs.existsSync(downloadPath))
+				fs.mkdirSync(downloadPath, { recursive: true });
+
+			const page = await openBrowser(downloadPath);
+			const fileName = await getExcel(page, downloadPath);
+			const matches = await readFile(downloadPath, fileName);
+
+			try {
+				fs.unlinkSync(path.join(downloadPath, fileName));
+			} catch (e) {}
+
+			// RESTITUIAMO UN OGGETTO SERIALIZZABILE (Data come stringa ISO)
+			return {
+				matches: orderByStatus(matches),
+				lastUpdate: new Date().toISOString(), // <--- STRINGA, NON DATE
+				team: env.TEAM_CATEGORY,
+				category: env.CATEGORY_TARGET,
+			};
+		} finally {
+			isWorking = false;
+		}
+	},
+	["volleyball-matches-data"],
+	{ revalidate: 86400, tags: ["matches"] },
+);
+
+/**
  * tRPC router for handling requests related to retrieving volleyball match information. It defines a single procedure `getInfo` that performs the entire process of opening a browser, navigating to the specified URL, setting the category and team, downloading the Excel file, and processing it to extract the relevant data.
  */
 export const orarioRouter = createTRPCRouter({
-  getInfo: publicProcedure.query(async () => {
-    const getCachedMatches = unstable_cache(
-      async () => {
-        if (isWorking) {
-          throw new TRPCError({
-            code: "TOO_MANY_REQUESTS",
-            message: "Data retrieval in progress. Please try again later.",
-          });
-        }
+	getInfo: publicProcedure
+		.input(z.void())
+		.output(
+			z.object({
+				matches: z.array(MatchSchema),
+				lastUpdate: z.string(),
+				team: z.string(),
+				category: z.string(),
+			}),
+		)
+		.query(async () => {
+			try {
+				return await jobWithMessage(
+					"Starting data retrieval process...",
+					async () => {
+						return await jobWithMessage(
+							"Fetching and caching matches...",
+							async () => {
+								return await fetchAndCacheMatches();
+							},
+							"Matches fetched and cached successfully",
+						);
+					},
+					"Data retrieval process completed successfully",
+				);
+			} catch (err) {
+				if (err instanceof TRPCError) throw err;
 
-        try {
-          isWorking = true;
-
-          const downloadPath = path.join(process.cwd(), "public", "download");
-          if (!fs.existsSync(downloadPath))
-            fs.mkdirSync(downloadPath, { recursive: true });
-
-          const page = await openBrowser(downloadPath);
-          const fileName = await getExcel(page, downloadPath);
-          const matches = await readFile(downloadPath, fileName);
-
-          try {
-            fs.unlinkSync(path.join(downloadPath, fileName));
-          } catch (e) {}
-
-          const orderedMatches = orderByStatus(matches);
-          const lastUpdate = new Date();
-          return { matches: orderedMatches, lastUpdate };
-        } finally {
-          isWorking = false;
-        }
-      },
-      ["volleyball-matches-data"],
-      {
-        revalidate: 86400,
-        tags: ["matches"],
-      },
-    );
-
-    try {
-      return await jobWithMessage(
-        "Starting data retrieval process...",
-        async () => {
-          const data = await getCachedMatches();
-          return data;
-        },
-        "Data retrieval process completed successfully",
-      );
-    } catch (err) {
-      if (err instanceof TRPCError) throw err;
-
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve match data.",
-        cause: err,
-      });
-    }
-  }),
-  getCategory: publicProcedure.query(() => {
-    return env.CATEGORY_TARGET!;
-  }),
-  getTeam: publicProcedure.query(() => {
-    return env.TEAM_CATEGORY!;
-  }),
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to retrieve match data.",
+					cause: err,
+				});
+			}
+		}),
 });

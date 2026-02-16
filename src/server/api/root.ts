@@ -1,7 +1,7 @@
-import {createCallerFactory, createTRPCRouter} from "@/server/api/trpc";
-import {orarioRouter} from "@/server/api/routers/orario";
+import { orarioRouter } from "@/server/api/routers/orario";
+import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 export const appRouter = createTRPCRouter({
-    orarioRouter: orarioRouter
+	orarioRouter: orarioRouter,
 });
 
 export type AppRouter = typeof appRouter;

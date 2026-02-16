@@ -1,50 +1,48 @@
-import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import {ThemeProvider} from "next-themes";
-import {TRPCReactProvider} from "@/trpc/react";
+import { ThemeProvider } from "next-themes";
+import { TRPCReactProvider } from "@/trpc/react";
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+	variable: "--font-geist-sans",
+	subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+	variable: "--font-geist-mono",
+	subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-    title: "Match Time",
-    description: "A simple match time tracker for Under 15 maschile PGS volleyball team.",
-    appleWebApp: {
-        capable: true,
-        statusBarStyle: "default",
-        title: "Match Time",
-    },
-    manifest: "/manifest.json",
+	title: "Match Time",
+	description:
+		"A simple match time tracker for Under 15 maschile PGS volleyball team.",
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "default",
+		title: "Match Time",
+	},
+	manifest: "/manifest.json",
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
+	children,
+}: Readonly<{
+	children: React.ReactNode;
 }>) {
-    return (
-        <html lang="it" suppressHydrationWarning>
-        <body
-            className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            <TRPCReactProvider>
-                {children}
-            </TRPCReactProvider>
-        </ThemeProvider>
-        </body>
-        </html>
-    );
+	return (
+		<html lang="it" suppressHydrationWarning>
+			<body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<TRPCReactProvider>{children}</TRPCReactProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }

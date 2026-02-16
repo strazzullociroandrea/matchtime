@@ -1,16 +1,16 @@
 import { z } from "zod";
 
 export const MatchSchema = z.object({
-  Giornata: z.string() || z.number(),
-  Numero: z.string().or(z.number()),
-  Data: z.string(),
-  Ora: z.string(),
-  Casa: z.string(),
-  Trasferta: z.string(),
-  Indirizzo: z.string(),
-  Done: z.boolean(),
-  ThisWeek: z.boolean(),
-  IsHome: z.boolean(),
+	giornata: z.string(),
+	numero: z.string(),
+	data: z.string(),
+	ora: z.string(),
+	casa: z.string(),
+	trasferta: z.string(),
+	indirizzo: z.string(),
+	done: z.boolean(),
+	thisWeek: z.boolean(),
+	isHome: z.boolean(),
 });
 
 export type PartitaVolley = z.infer<typeof MatchSchema>;
