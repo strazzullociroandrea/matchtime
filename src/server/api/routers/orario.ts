@@ -59,7 +59,7 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
     const browser: Browser = await puppeteer.launch({
       headless: true,
       args: [
-        "no-sandbox",
+        "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
