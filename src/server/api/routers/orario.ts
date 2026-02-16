@@ -63,6 +63,7 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
+
       ],
     });
     const page: Page = await browser.newPage();
