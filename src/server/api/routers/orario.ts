@@ -7,6 +7,7 @@ import { type Page, type Browser } from "puppeteer";
 import ExcelJS from "exceljs";
 import { unstable_cache } from "next/cache";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
+import { env } from "@/env";
 
 /**
  * Function that wraps a job with start and end messages, useful for logging and user feedback. The job can be synchronous or asynchronous.
@@ -91,7 +92,7 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
  */
 const getExcel = async (page: Page, downloadPath: string) => {
   try {
-    await page.goto(process.env.URL_DOWNLOAD_SITE!, {
+    await page.goto(env.URL_DOWNLOAD_SITE!, {
       waitUntil: "networkidle2",
     });
 
@@ -101,7 +102,7 @@ const getExcel = async (page: Page, downloadPath: string) => {
         try {
           const categorySelector = "#available-categorie";
           await page.click(categorySelector);
-          const targetCategory = process.env.CATEGORY_TARGET;
+          const targetCategory = env.CATEGORY_TARGET;
           const categoryOption = `li[role="option"] ::-p-text(${targetCategory})`;
           await page.waitForSelector(categoryOption, {
             visible: true,
@@ -122,7 +123,7 @@ const getExcel = async (page: Page, downloadPath: string) => {
       async () => {
         try {
           const teamSelector = "#available-teams";
-          const targetSquadra = process.env.TEAM_CATEGORY!;
+          const targetSquadra = env.TEAM_CATEGORY!;
           console.log("Ricerca squadra: " + targetSquadra);
           await page.type(teamSelector, targetSquadra, { delay: 100 });
           const squadraOption = `li.MuiAutocomplete-option ::-p-text(${targetSquadra})`;
@@ -276,7 +277,7 @@ const readFile = async (
         ThisWeek: thisWeek(getVal(3)),
         IsHome:
           getVal(7).toLowerCase() ===
-          process.env.HOME_TEAM_PLACE!.toLowerCase(),
+          env.HOME_TEAM_PLACE!.toLowerCase(),
       };
 
       match.push(partita);
@@ -362,9 +363,9 @@ export const orarioRouter = createTRPCRouter({
     }
   }),
   getCategory: publicProcedure.query(() => {
-    return process.env.CATEGORY_TARGET!;
+    return env.CATEGORY_TARGET!;
   }),
   getTeam: publicProcedure.query(() => {
-    return process.env.TEAM_CATEGORY!;
+    return env.TEAM_CATEGORY!;
   }),
 });
