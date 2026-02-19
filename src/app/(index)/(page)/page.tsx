@@ -211,18 +211,30 @@ export default function Home() {
                 <div className="flex items-center gap-4 pt-3 text-sm font-medium">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Calendar className="w-4 h-4 text-primary opacity-80" />
-                    <span>{matchSingle.data}</span>
+                    <span>
+                      {matchSingle.data && matchSingle.ora
+                        ? matchSingle.data
+                        : "Rinviata"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Clock className="w-4 h-4 text-primary opacity-80" />
-                    <span>{matchSingle.ora}</span>
+                    <span>
+                      {matchSingle.data && matchSingle.ora
+                        ? matchSingle.ora
+                        : "Rinviata"}
+                    </span>
                   </div>
                 </div>
               </CardHeader>
 
               <CardContent>
                 <a
-                  href={getNavigationLink(matchSingle.indirizzo)}
+                  href={
+                    matchSingle.data && matchSingle.ora
+                      ? getNavigationLink(matchSingle.indirizzo)
+                      : undefined
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-transparent hover:border-primary/20 hover:bg-secondary transition-all"
@@ -232,7 +244,9 @@ export default function Home() {
                       <MapPin className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-semibold truncate text-muted-foreground group-hover:text-foreground">
-                      {matchSingle.indirizzo}
+                      {matchSingle.data && matchSingle.indirizzo
+                        ? `${matchSingle.data} - ${matchSingle.indirizzo}`
+                        : "Indirizzo non disponibile"}
                     </span>
                   </div>
                   <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />
