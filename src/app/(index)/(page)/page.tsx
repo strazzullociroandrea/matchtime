@@ -188,11 +188,13 @@ export default function Home() {
                           : "outline"
                     }
                   >
-                    {matchSingle.done
-                      ? "Conclusa"
-                      : matchSingle.thisWeek
-                        ? "Prossima"
-                        : "In programma"}
+                    {matchSingle.data && matchSingle.ora
+                      ? matchSingle.done
+                        ? "Conclusa"
+                        : matchSingle.thisWeek
+                          ? "Prossima"
+                          : "In programma"
+                      : "Rinviata"}
                   </Badge>
                 </div>
 

@@ -327,11 +327,10 @@ const fetchAndCacheMatches = unstable_cache(
       try {
         fs.unlinkSync(path.join(downloadPath, fileName));
       } catch (e) {}
-
-      // RESTITUIAMO UN OGGETTO SERIALIZZABILE (Data come stringa ISO)
+ 
       return {
         matches: orderByStatus(matches),
-        lastUpdate: new Date().toISOString(), // <--- STRINGA, NON DATE
+        lastUpdate: new Date().toISOString(), 
         team: env.TEAM_CATEGORY,
         category: env.CATEGORY_TARGET,
       };
