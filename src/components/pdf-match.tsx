@@ -114,15 +114,7 @@ export const CalendarPDF = ({
               ]}
             >
               <View style={[styles.tableCol, styles.colSmall]}>
-                <Text style={styles.tableCell}>
-                  {match.data && match.ora
-                    ? match.done
-                      ? "Conclusa"
-                      : match.thisWeek
-                        ? "Prossima"
-                        : "In programma"
-                    : "Rinviata"}
-                </Text>
+                <Text style={styles.tableCell}>{match.status}</Text>
               </View>
               <View style={[styles.tableCol, styles.colMedium]}>
                 <Text style={styles.tableCell}>

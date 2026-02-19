@@ -276,6 +276,14 @@ const readFile = async (
         done: isDayPassed(getVal(3)),
         thisWeek: thisWeek(getVal(3)),
         isHome: getVal(7).toLowerCase() === env.HOME_TEAM_PLACE!.toLowerCase(),
+        status:
+          getVal(3) && getVal(4)
+            ? isDayPassed(getVal(3))
+              ? "Conclusa"
+              : thisWeek(getVal(3))
+                ? "Prossima"
+                : "In programma"
+            : "Rinviata",
       };
 
       match.push(partita);
