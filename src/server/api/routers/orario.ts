@@ -63,7 +63,6 @@ const openBrowser = async (downloadPath: string): Promise<Page> => {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
-
       ],
     });
     const page: Page = await browser.newPage();
@@ -328,10 +327,9 @@ const fetchAndCacheMatches = unstable_cache(
         fs.unlinkSync(path.join(downloadPath, fileName));
       } catch (e) {}
 
-      // RESTITUIAMO UN OGGETTO SERIALIZZABILE (Data come stringa ISO)
       return {
         matches: orderByStatus(matches),
-        lastUpdate: new Date().toISOString(), // <--- STRINGA, NON DATE
+        lastUpdate: new Date().toISOString(),
         team: env.TEAM_CATEGORY,
         category: env.CATEGORY_TARGET,
       };
@@ -340,7 +338,7 @@ const fetchAndCacheMatches = unstable_cache(
     }
   },
   ["volleyball-matches-data"],
-  { revalidate: 86400, tags: ["matches"] },
+  { revalidate: 43200, tags: ["matches"] },
 );
 
 /**
