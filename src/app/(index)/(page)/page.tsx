@@ -12,7 +12,7 @@ import { CardMatch } from "@/components/card-match";
 
 export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
-  const { data, isLoading } = api.orarioRouter.getInfo.useQuery();
+  const { data, isLoading } = api.orario.getInfo.useQuery();
 
   if (isLoading || !data || !data.team || !data.category) {
     return (

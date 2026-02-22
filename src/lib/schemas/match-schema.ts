@@ -1,15 +1,13 @@
 import { z } from "zod";
 
 export const MatchSchema = z.object({
-  giornata: z.string(),
-  numero: z.string(),
-  data: z.string(),
-  ora: z.string(),
-  casa: z.string(),
-  trasferta: z.string(),
-  indirizzo: z.string(),
-  done: z.boolean(),
-  thisWeek: z.boolean(),
+  day: z.string(),
+  number: z.string(),
+  date: z.string(),
+  hour: z.string(),
+  home: z.string(),
+  guest: z.string(),
+  place: z.string(),
   isHome: z.boolean(),
   status: z.enum(["Conclusa", "Prossima", "In programma", "Rinviata"]),
 });
