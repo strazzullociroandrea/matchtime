@@ -1,9 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { CalendarPDF } from "@/components/pdf-match";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
 import { CardMatch } from "@/components/card-match";
 import { Navbar } from "@/components/navbar";
@@ -25,8 +21,12 @@ export default function Home() {
 
   return (
     <>
-      <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background px-4 py-4 text-center shadow-sm">
-        <Navbar category={data?.category} />
+      <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background  text-center shadow-sm">
+        <Navbar
+          matches={data?.matches || []}
+          category={data?.category || ""}
+          team={data?.team || ""}
+        />
       </header>
       <main>
         <CardMatch

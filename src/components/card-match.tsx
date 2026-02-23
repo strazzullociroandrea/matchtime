@@ -1,5 +1,12 @@
 "use client";
-import { Calendar, ChevronRight, Clock, MapPin, Info } from "lucide-react";
+import {
+  Calendar,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Info,
+  List,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
@@ -15,6 +22,11 @@ import {
 import { HelpCard } from "@/components/help-card";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+} from "@/components/ui/button-group";
 
 export const CardMatch = ({
   matches,
@@ -47,9 +59,25 @@ export const CardMatch = ({
         team={team}
       />
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
-        <div>
-          <Button>Elenco</Button>
-          <Button>Mensile</Button>
+        <div className="mt-5">
+          <ButtonGroup>
+            <Button
+              variant="outline"
+              className="text-muted-foreground hover:text-primary "
+              disabled
+            >
+              <List size={18} className="mr-2" />
+              Elenco
+            </Button>
+            <Button
+              variant="outline"
+              className="text-muted-foreground hover:text-primary"
+              disabled
+            >
+              <Calendar size={18} className="mr-2" />
+              Calendario
+            </Button>
+          </ButtonGroup>
         </div>
         <div className="flex sm:justify-end gap-2">
           <div className="flex flex-col gap-1">
@@ -59,7 +87,7 @@ export const CardMatch = ({
             >
               Stato Partita
             </Label>
-            <Select key="stato-select" defaultValue="tutti">
+            <Select key="stato-select" defaultValue="tutti" disabled>
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Filtra per stato" />
               </SelectTrigger>
@@ -79,7 +107,7 @@ export const CardMatch = ({
             >
               Luogo Partita
             </Label>
-            <Select key="luogo-select" defaultValue="tutti">
+            <Select key="luogo-select" defaultValue="tutti" disabled>
               <SelectTrigger className="w-45">
                 <SelectValue placeholder="Filtra per luogo" />
               </SelectTrigger>

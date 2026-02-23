@@ -130,8 +130,16 @@ const prepareData = async ({
           guest: getVal(row.getCell(6)),
           place: formattedPlace,
           isHome:
-            formattedPlace.toLowerCase().trim() ===
-            homePlace.toLowerCase().trim(),
+            formattedPlace
+              .toLowerCase()
+              .replaceAll(",", "")
+              .replaceAll("-", "")
+              .trim() ===
+            homePlace
+              .toLowerCase()
+              .replaceAll(",", "")
+              .replaceAll("-", "")
+              .trim(),
           status:
             getVal(row.getCell(3)) !== "NA" && getVal(row.getCell(4)) !== "NA"
               ? isDayPassed(getVal(row.getCell(3)))

@@ -110,7 +110,7 @@ export const CalendarPDF = ({
               style={[
                 styles.tableRow,
                 match.isHome ? styles.isHome : {},
-                match.done ? styles.done : {},
+                match.status === "Conclusa" ? styles.done : {},
               ]}
             >
               <View style={[styles.tableCol, styles.colSmall]}>
@@ -118,17 +118,17 @@ export const CalendarPDF = ({
               </View>
               <View style={[styles.tableCol, styles.colMedium]}>
                 <Text style={styles.tableCell}>
-                  {match.data} {match.ora}
+                  {match.date} {match.hour}
                 </Text>
               </View>
               <View style={[styles.tableCol, styles.colMedium]}>
-                <Text style={styles.tableCell}>{match.casa}</Text>
+                <Text style={styles.tableCell}>{match.home}</Text>
               </View>
               <View style={[styles.tableCol, styles.colMedium]}>
-                <Text style={styles.tableCell}>{match.trasferta}</Text>
+                <Text style={styles.tableCell}>{match.guest}</Text>
               </View>
               <View style={[styles.tableCol, styles.colLarge]}>
-                <Text style={styles.tableCell}>{match.indirizzo}</Text>
+                <Text style={styles.tableCell}>{match.place}</Text>
               </View>
             </View>
           ))
