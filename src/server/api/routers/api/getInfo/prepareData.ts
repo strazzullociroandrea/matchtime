@@ -75,6 +75,16 @@ const formattedPlace = (place: string): string => {
     .join(", ");
 };
 
+const formattedTeam = (team: string): string => {
+  if (!team || team === "NA") return "NA";
+
+  return team
+    .split(" ")
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 /**
  * Function to prepare the data for retrieval, which includes opening the browser, setting the category and team, downloading the Excel file, and parsing its contents to create an array of PartitaVolley objects.
  *
@@ -143,8 +153,8 @@ const prepareData = async ({
           number: getVal(row.getCell(2)),
           date: getVal(row.getCell(3)),
           hour: getVal(row.getCell(4)),
-          home: getVal(row.getCell(5)),
-          guest: getVal(row.getCell(6)),
+          home: formattedTeam(getVal(row.getCell(5))),
+          guest: formattedTeam(getVal(row.getCell(6))),
           place: place,
           isHome: place === homePlace,
           status:
