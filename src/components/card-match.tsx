@@ -35,16 +35,16 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
                   variant="outline"
                   className="bg-primary/5 text-primary border-primary/20"
                 >
-                  Giornata {matchSingle.giornata}
+                  Giornata {matchSingle.day}
                 </Badge>
               </div>
               <Badge
                 variant={
-                  matchSingle.done
+                  matchSingle.status === "Rinviata"
                     ? "destructive"
-                    : matchSingle.thisWeek
-                      ? "default"
-                      : "outline"
+                    : matchSingle.status === "In programma"
+                      ? "outline"
+                      : "default"
                 }
               >
                 {matchSingle.status}
@@ -52,11 +52,11 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
             </div>
 
             <CardTitle className="text-2xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2">
-              <span className="text-foreground">{matchSingle.casa}</span>
+              <span className="text-foreground">{matchSingle.home}</span>
               <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
                 VS
               </span>
-              <span className="text-foreground">{matchSingle.trasferta}</span>
+              <span className="text-foreground">{matchSingle.guest}</span>
             </CardTitle>
 
             <div className="flex items-center gap-4 pt-3 text-sm font-medium">
@@ -64,16 +64,16 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
                 <Calendar className="w-4 h-4 text-primary opacity-80" />
                 <span>
                   {matchSingle.status === "Rinviata"
-                    ? "Rinviata"
-                    : matchSingle.data}
+                    ? "Non disponibile"
+                    : matchSingle.date}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Clock className="w-4 h-4 text-primary opacity-80" />
                 <span>
                   {matchSingle.status === "Rinviata"
-                    ? "Rinviata"
-                    : matchSingle.ora}
+                    ? "Non disponibile"
+                    : matchSingle.hour}
                 </span>
               </div>
             </div>
@@ -84,14 +84,14 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
               href={
                 matchSingle.status === "Rinviata"
                   ? undefined
-                  : getNavigationLink(matchSingle.indirizzo)
+                  : getNavigationLink(matchSingle.place)
               }
               target="_blank"
               rel="noopener noreferrer"
               className={`group flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-transparent transition-all ${
                 matchSingle.status !== "Rinviata"
                   ? "hover:border-primary/20 hover:bg-secondary"
-                  : "cursor-not-allowed"  
+                  : "cursor-not-allowed"
               }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
@@ -99,8 +99,8 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <span className="text-xs font-semibold truncate text-muted-foreground group-hover:text-foreground">
-                  {matchSingle.data && matchSingle.indirizzo
-                    ? `${matchSingle.indirizzo}`
+                  {matchSingle.status !== "Rinviata" && matchSingle.place
+                    ? `${matchSingle.place}`
                     : "Indirizzo non disponibile"}
                 </span>
               </div>
