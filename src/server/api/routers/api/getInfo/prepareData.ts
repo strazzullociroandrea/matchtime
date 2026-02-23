@@ -53,6 +53,29 @@ const thisWeek = (dateStr: string): boolean => {
 };
 
 /**
+ * Function to format the place string by splitting it on hyphens, trimming whitespace, and joining the parts with commas. If the input string is empty or null, it returns "NA".
+ * @param place A string representing the place of the match, which may contain hyphens and extra whitespace
+ * @returns  A formatted string with the place information, where hyphens are replaced with commas and extra whitespace is removed. If the input is empty or null, it returns "NA".
+ */
+const formattedPlace = (place: string): string => {
+  if (!place || place === "NA") return "NA";
+
+  return place
+    .split("-")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0)
+    .map((item) => {
+      const items: string[] = item.split(" ");
+      const components: string[] = items.map(
+        (comp) => comp.charAt(0).toUpperCase() + comp.slice(1).toLowerCase(),
+      );
+
+      return components.join(" ");
+    })
+    .join(", ");
+};
+
+/**
  * Function to prepare the data for retrieval, which includes opening the browser, setting the category and team, downloading the Excel file, and parsing its contents to create an array of PartitaVolley objects.
  *
  * @param downloadPath The temporary path where the file will be downloaded
@@ -112,13 +135,7 @@ const prepareData = async ({
     const match: PartitaVolley[] = [];
 
     worksheet.eachRow((row, rowNumber) => {
-      const formattedPlace = getVal(row.getCell(7))
-        .trim()
-        .replace(/-/g, ",")
-        .replace(/,+/g, ",")
-        .replace(/\s*,\s*/g, ", ")
-        .replace(/\s+/g, " ")
-        .trim();
+      const place = formattedPlace(getVal(row.getCell(7)));
 
       if (rowNumber > 3) {
         const matchTmp: PartitaVolley = {
@@ -128,18 +145,8 @@ const prepareData = async ({
           hour: getVal(row.getCell(4)),
           home: getVal(row.getCell(5)),
           guest: getVal(row.getCell(6)),
-          place: formattedPlace,
-          isHome:
-            formattedPlace
-              .toLowerCase()
-              .replaceAll(",", "")
-              .replaceAll("-", "")
-              .trim() ===
-            homePlace
-              .toLowerCase()
-              .replaceAll(",", "")
-              .replaceAll("-", "")
-              .trim(),
+          place: place,
+          isHome: place === homePlace,
           status:
             getVal(row.getCell(3)) !== "NA" && getVal(row.getCell(4)) !== "NA"
               ? isDayPassed(getVal(row.getCell(3)))
