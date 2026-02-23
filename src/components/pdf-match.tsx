@@ -120,7 +120,7 @@ export const CalendarPDF = ({
                 <Text style={styles.tableCell}>
                   {match.status === "Rinviata"
                     ? ""
-                    : match.date + ", " + match.hour}
+                    : "il " + match.date + " alle " + match.hour}
                 </Text>
               </View>
               <View style={[styles.tableCol, styles.colMedium]}>
