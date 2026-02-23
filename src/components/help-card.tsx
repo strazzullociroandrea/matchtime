@@ -64,17 +64,8 @@ export const HelpCard = ({
                   onClick={() => setShowInfo(false)}
                   className="w-full sm:w-2/3 bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all"
                 >
-                  Inizia a navigare
+                  Ho capito!
                 </button>
-                <p className="mt-4 text-xs text-slate-400  tracking-tight">
-                  Questo sito è un progetto indipendente e non ufficiale. I dati
-                  dei calendari sono di proprietà di PGS (Polisportive Giovanili
-                  Salesiane), recuperati tramite file excel reso disponbile
-                  dagli stessi. L&apos;autore non si assume responsabilità per
-                  eventuali inesattezze o cambiamenti di orario non riportati.
-                  Consultare sempre il portale ufficiale per le comunicazioni
-                  formali.
-                </p>
               </div>
             </div>
           </CardContent>

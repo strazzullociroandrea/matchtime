@@ -1,10 +1,32 @@
-import { Calendar, ChevronRight, Clock, MapPin } from "lucide-react";
+"use client";
+import { Calendar, ChevronRight, Clock, MapPin, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { HelpCard } from "@/components/help-card";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
 
-export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
+export const CardMatch = ({
+  matches,
+  category,
+  team,
+}: {
+  matches: PartitaVolley[];
+  category: string;
+  team: string;
+}) => {
+  const [showInfo, setShowInfo] = useState(false);
+
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
     if (typeof window !== "undefined") {
@@ -17,100 +39,161 @@ export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
   };
 
   return (
-    <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
-      {matches.map((matchSingle, index) => (
-        <Card
-          key={index}
-          className={cn(
-            "relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-l-4",
-            matchSingle.isHome
-              ? "border-l-primary bg-primary/5"
-              : "border-l-muted",
-          )}
-        >
-          <CardHeader className="pb-4">
-            <div className="flex justify-between items-start mb-4">
-              <div className="space-y-1">
+    <>
+      <HelpCard
+        showInfo={showInfo}
+        setShowInfo={setShowInfo}
+        category={category}
+        team={team}
+      />
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
+        <div>
+          <Button>Elenco</Button>
+          <Button>Mensile</Button>
+        </div>
+        <div className="flex sm:justify-end gap-2">
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="stato-select"
+              className="text-xs font-medium ml-1 text-muted-foreground"
+            >
+              Stato Partita
+            </Label>
+            <Select key="stato-select" defaultValue="tutti">
+              <SelectTrigger className="w-45">
+                <SelectValue placeholder="Filtra per stato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tutti">Tutti</SelectItem>
+                <SelectItem value="rinviata">Rinviata</SelectItem>
+                <SelectItem value="prossima">Prossima</SelectItem>
+                <SelectItem value="programma">In programma</SelectItem>
+                <SelectItem value="giocata">Giocata</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="luogo-select"
+              className="text-xs font-medium ml-1 text-muted-foreground"
+            >
+              Luogo Partita
+            </Label>
+            <Select key="luogo-select" defaultValue="tutti">
+              <SelectTrigger className="w-45">
+                <SelectValue placeholder="Filtra per luogo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tutti">Tutti</SelectItem>
+                <SelectItem value="casa">In casa</SelectItem>
+                <SelectItem value="fuori">Fuori</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            variant="outline"
+            className="text-center text-muted-foreground hover:text-primary mt-5"
+            onClick={() => setShowInfo(true)}
+          >
+            <Info className="w-15 h-15" />
+          </Button>
+        </div>
+      </div>
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
+        {matches.map((matchSingle, index) => (
+          <Card
+            key={index}
+            className={cn(
+              "relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-l-4",
+              matchSingle.isHome
+                ? "border-l-primary bg-primary/5"
+                : "border-l-muted",
+            )}
+          >
+            <CardHeader className="pb-4">
+              <div className="flex justify-between items-start mb-4">
+                <div className="space-y-1">
+                  <Badge
+                    variant="outline"
+                    className="bg-primary/5 text-primary border-primary/20"
+                  >
+                    Giornata {matchSingle.day}
+                  </Badge>
+                </div>
                 <Badge
-                  variant="outline"
-                  className="bg-primary/5 text-primary border-primary/20"
+                  variant={
+                    matchSingle.status === "Rinviata"
+                      ? "destructive"
+                      : matchSingle.status === "In programma"
+                        ? "outline"
+                        : "default"
+                  }
                 >
-                  Giornata {matchSingle.day}
+                  {matchSingle.status}
                 </Badge>
               </div>
-              <Badge
-                variant={
-                  matchSingle.status === "Rinviata"
-                    ? "destructive"
-                    : matchSingle.status === "In programma"
-                      ? "outline"
-                      : "default"
-                }
-              >
-                {matchSingle.status}
-              </Badge>
-            </div>
 
-            <CardTitle className="text-2xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2">
-              <span className="text-foreground">{matchSingle.home}</span>
-              <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
-                VS
-              </span>
-              <span className="text-foreground">{matchSingle.guest}</span>
-            </CardTitle>
-
-            <div className="flex items-center gap-4 pt-3 text-sm font-medium">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Calendar className="w-4 h-4 text-primary opacity-80" />
-                <span>
-                  {matchSingle.status === "Rinviata"
-                    ? "Non disponibile"
-                    : matchSingle.date}
+              <CardTitle className="text-2xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2">
+                <span className="text-foreground">{matchSingle.home}</span>
+                <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
+                  VS
                 </span>
-              </div>
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Clock className="w-4 h-4 text-primary opacity-80" />
-                <span>
-                  {matchSingle.status === "Rinviata"
-                    ? "Non disponibile"
-                    : matchSingle.hour}
-                </span>
-              </div>
-            </div>
-          </CardHeader>
+                <span className="text-foreground">{matchSingle.guest}</span>
+              </CardTitle>
 
-          <CardContent>
-            <a
-              href={
-                matchSingle.status === "Rinviata"
-                  ? undefined
-                  : getNavigationLink(matchSingle.place)
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-transparent transition-all ${
-                matchSingle.status !== "Rinviata"
-                  ? "hover:border-primary/20 hover:bg-secondary"
-                  : "cursor-not-allowed"
-              }`}
-            >
-              <div className="flex items-center gap-3 overflow-hidden">
-                <div className="p-2 bg-white dark:bg-background rounded-lg shadow-sm group-hover:text-primary transition-colors">
-                  <MapPin className="w-4 h-4" />
+              <div className="flex items-center gap-4 pt-3 text-sm font-medium">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Calendar className="w-4 h-4 text-primary opacity-80" />
+                  <span>
+                    {matchSingle.status === "Rinviata"
+                      ? "Non disponibile"
+                      : matchSingle.date}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold truncate text-muted-foreground group-hover:text-foreground">
-                  {matchSingle.status !== "Rinviata" && matchSingle.place
-                    ? `${matchSingle.place}`
-                    : "Indirizzo non disponibile"}
-                </span>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Clock className="w-4 h-4 text-primary opacity-80" />
+                  <span>
+                    {matchSingle.status === "Rinviata"
+                      ? "Non disponibile"
+                      : matchSingle.hour}
+                  </span>
+                </div>
               </div>
-              {matchSingle.status !== "Rinviata" && (
-                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />
-              )}
-            </a>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+            </CardHeader>
+
+            <CardContent>
+              <a
+                href={
+                  matchSingle.status === "Rinviata"
+                    ? undefined
+                    : getNavigationLink(matchSingle.place)
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-transparent transition-all ${
+                  matchSingle.status !== "Rinviata"
+                    ? "hover:border-primary/20 hover:bg-secondary"
+                    : "cursor-not-allowed"
+                }`}
+              >
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="p-2 bg-white dark:bg-background rounded-lg shadow-sm group-hover:text-primary transition-colors">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-semibold truncate text-muted-foreground group-hover:text-foreground">
+                    {matchSingle.status !== "Rinviata" && matchSingle.place
+                      ? `${matchSingle.place}`
+                      : "Indirizzo non disponibile"}
+                  </span>
+                </div>
+                {matchSingle.status !== "Rinviata" && (
+                  <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />
+                )}
+              </a>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </>
   );
 };

@@ -112,6 +112,14 @@ const prepareData = async ({
     const match: PartitaVolley[] = [];
 
     worksheet.eachRow((row, rowNumber) => {
+      const formattedPlace = getVal(row.getCell(7))
+        .trim()
+        .replace(/-/g, ",")
+        .replace(/,+/g, ",")
+        .replace(/\s*,\s*/g, ", ")
+        .replace(/\s+/g, " ")
+        .trim();
+
       if (rowNumber > 3) {
         const matchTmp: PartitaVolley = {
           day: getVal(row.getCell(1)),
@@ -120,9 +128,9 @@ const prepareData = async ({
           hour: getVal(row.getCell(4)),
           home: getVal(row.getCell(5)),
           guest: getVal(row.getCell(6)),
-          place: getVal(row.getCell(7)),
+          place: formattedPlace,
           isHome:
-            getVal(row.getCell(5)).toLowerCase().trim() ===
+            formattedPlace.toLowerCase().trim() ===
             homePlace.toLowerCase().trim(),
           status:
             getVal(row.getCell(3)) !== "NA" && getVal(row.getCell(4)) !== "NA"
@@ -152,7 +160,7 @@ const prepareData = async ({
       message: "Error preparing data.",
       cause: error instanceof Error ? error : undefined,
     });
-  } 
+  }
 };
 
 export default prepareData;

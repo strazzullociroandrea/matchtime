@@ -10,7 +10,6 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
 export default function Home() {
-  const [showInfo, setShowInfo] = useState(false);
   const { data, isLoading } = api.orario.getInfo.useQuery();
 
   if (isLoading || !data || !data.team || !data.category) {
@@ -26,13 +25,15 @@ export default function Home() {
 
   return (
     <>
-      
-
       <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background px-4 py-4 text-center shadow-sm">
         <Navbar category={data?.category} />
       </header>
       <main>
-        <CardMatch matches={data?.matches || []} />
+        <CardMatch
+          matches={data?.matches || []}
+          category={data?.category || ""}
+          team={data?.team || ""}
+        />
       </main>
       <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
         <Footer lastUpdate={data?.lastUpdate} />

@@ -6,7 +6,8 @@ export const Navbar = ({ category }: { category: string }) => {
     <nav>
       <div className="mb-3">
         <Badge variant="outline" className="text-xs font-light">
-          {category} <Dot /> {new Date().toLocaleDateString("it-IT")}
+          {category} <Dot />{" "}
+          {new Date().getFullYear()}
         </Badge>
       </div>
       <div className="flex items-center justify-center gap-3 mb-2">
