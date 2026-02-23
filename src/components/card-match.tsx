@@ -1,32 +1,12 @@
 "use client";
-import {
-  Calendar,
-  ChevronRight,
-  Clock,
-  MapPin,
-  Info,
-  List,
-} from "lucide-react";
+import { Calendar, ChevronRight, Clock, MapPin, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { HelpCard } from "@/components/help-card";
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import {
-  ButtonGroup,
-  ButtonGroupSeparator,
-  ButtonGroupText,
-} from "@/components/ui/button-group";
+import { Button } from "@/components/ui/button";
 
 export const CardMatch = ({
   matches,
@@ -58,76 +38,13 @@ export const CardMatch = ({
         category={category}
         team={team}
       />
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
-        <div className="mt-5">
-          <ButtonGroup>
-            <Button
-              variant="outline"
-              className="text-muted-foreground hover:text-primary "
-              disabled
-            >
-              <List size={18} className="mr-2" />
-              Elenco
-            </Button>
-            <Button
-              variant="outline"
-              className="text-muted-foreground hover:text-primary"
-              disabled
-            >
-              <Calendar size={18} className="mr-2" />
-              Calendario
-            </Button>
-          </ButtonGroup>
-        </div>
-        <div className="flex sm:justify-end gap-2">
-          <div className="flex flex-col gap-1">
-            <Label
-              htmlFor="stato-select"
-              className="text-xs font-medium ml-1 text-muted-foreground"
-            >
-              Stato Partita
-            </Label>
-            <Select key="stato-select" defaultValue="tutti" disabled>
-              <SelectTrigger className="w-45">
-                <SelectValue placeholder="Filtra per stato" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tutti">Tutti</SelectItem>
-                <SelectItem value="rinviata">Rinviata</SelectItem>
-                <SelectItem value="prossima">Prossima</SelectItem>
-                <SelectItem value="programma">In programma</SelectItem>
-                <SelectItem value="giocata">Giocata</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label
-              htmlFor="luogo-select"
-              className="text-xs font-medium ml-1 text-muted-foreground"
-            >
-              Luogo Partita
-            </Label>
-            <Select key="luogo-select" defaultValue="tutti" disabled>
-              <SelectTrigger className="w-45">
-                <SelectValue placeholder="Filtra per luogo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tutti">Tutti</SelectItem>
-                <SelectItem value="casa">In casa</SelectItem>
-                <SelectItem value="fuori">Fuori</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            variant="outline"
-            className="text-center text-muted-foreground hover:text-primary mt-5"
-            onClick={() => setShowInfo(true)}
-          >
-            <Info className="w-15 h-15" />
-          </Button>
-        </div>
+
+      <div className="flex justify-end w-full px-5 sm:px-20"> 
+        <Button variant="outline" className="text-center text-muted-foreground hover:text-primary mt-5" onClick={() => setShowInfo(true)}>
+          <Info className="w-15 h-15" />
+        </Button>
       </div>
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-20">
         {matches.map((matchSingle, index) => (
           <Card
             key={index}

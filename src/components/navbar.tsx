@@ -18,6 +18,7 @@ export const Navbar = ({
 }) => {
   return (
     <nav className=" border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto  py-6 ">
+      
       <div className="mb-3">
         <Badge
           variant="outline"
@@ -33,7 +34,7 @@ export const Navbar = ({
       </div>
       <div className="flex items-center justify-center gap-2">
         <p className="text-muted-foreground text-sm">
-          Sfoglia, filtra e scarica il calendario completo delle gare
+          Sfoglia, filtra e scarica il calendario delle gare.
         </p>
       </div>
       <div className="mt-4 flex justify-center w-full">
@@ -42,7 +43,7 @@ export const Navbar = ({
             <CalendarPDF matches={matches} category={category} team={team} />
           }
           fileName={`calendario_${category}_${team}.pdf`}
-          className=" hover:text-primary hover:border-primary transition-all duration-200 inline-flex items-center mt-2 text-muted-foreground font-light no-underline gap-2 border border-muted-foreground rounded-md px-4 py-2"
+          className="text-primary hover:border-primary transition-all duration-200 inline-flex items-center mt-2 font-light no-underline gap-2 border border-muted-foreground rounded-md px-4 py-2"
         >
           {({ loading }) => (
             <>
