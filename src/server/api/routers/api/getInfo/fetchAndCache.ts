@@ -5,6 +5,17 @@ import asyncJob from "@/server/api/routers/api/asyncJob";
 import { env } from "@/env";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import fs from "fs";
+
+/**
+ * Function to parse a date string in the format "dd/MM/yyyy" and return the corresponding timestamp. It splits the date string into day, month, and year components, creates a Date object using these components, and returns the timestamp (in milliseconds) of that date.
+ * @param dateStr A string representing a date in the format "dd/MM/yyyy".
+ * @returns The timestamp (in milliseconds) corresponding to the parsed date.
+ */
+const parseDate = (dateStr: string) => {
+  const [day, month, year] = dateStr.split("/").map(Number);
+  return new Date(year, month - 1, day).getTime();
+};
+
 let isWorking = false;
 
 /**
@@ -14,7 +25,11 @@ let isWorking = false;
  */
 const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
   return matches.sort((a, b) => {
-    if (a.status === b.status) return 0;
+    if (a.status === b.status) {
+      const timeA = parseDate(a.date);
+      const timeB = parseDate(b.date);
+      return timeA - timeB;
+    }
 
     if (a.status === "Prossima") return -1;
     if (b.status === "Prossima") return 1;
