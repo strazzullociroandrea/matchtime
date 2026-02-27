@@ -23,19 +23,29 @@ export const Navbar = ({
 
   return (
     <nav className="relative border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
-      
       <div className="absolute top-6 right-6 sm:right-20">
+        <PDFDownloadLink
+          document={
+            <CalendarPDF matches={matches} category={category} team={team} />
+          }
+          fileName={`calendario_${category}_${team}.pdf`}
+          className="mr-5 transition-colors"
+        >
+          <span className="inline-flex items-center gap-1 border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary rounded-full px-4 py-2 text-sm font-light">
+            <Download className="w-5 h-5" />
+            Download <span className="hidden sm:inline"> PDF</span>
+          </span>
+        </PDFDownloadLink>
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
+          className="w-10 h-10 rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
           onClick={() => setShowInfo(true)}
         >
           <Info className="w-5 h-5" />
         </Button>
       </div>
 
-      
       <div className="mb-3 ml-6">
         <Badge
           variant="outline"
@@ -55,27 +65,6 @@ export const Navbar = ({
         <p className="text-muted-foreground text-xs sm:text-sm font-medium pl-1 border-l-2 border-primary/30 ml-1">
           Visualizza il calendario completo delle partite della tua squadra.
         </p>
-      </div>
-
-      <div className="mt-4 flex ml-8 w-full">
-        <PDFDownloadLink
-          document={
-            <CalendarPDF matches={matches} category={category} team={team} />
-          }
-          fileName={`calendario_${category}_${team}.pdf`}
-          className="text-primary hover:border-primary transition-all duration-200 inline-flex items-center mt-2 font-light no-underline gap-2 border border-muted-foreground rounded-md px-4 py-2"
-        >
-          {({ loading }) => (
-            <>
-              <Download
-                className={cn("w-5 h-5", loading && "animate-bounce")}
-              />
-              <span className="text-sm">
-                {loading ? "Generazione..." : "Scarica calendario"}
-              </span>
-            </>
-          )}
-        </PDFDownloadLink>
       </div>
 
       <HelpCard
