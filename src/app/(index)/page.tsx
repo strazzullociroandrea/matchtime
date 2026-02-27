@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <>
-      <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background  text-center shadow-sm">
+      <header className="sticky mb-6 mt-5 top-0 z-50 w-full bg-background shadow-sm">
         <Navbar
           matches={data?.matches || []}
           category={data?.category || ""}
@@ -29,11 +29,7 @@ export default function Home() {
         />
       </header>
       <main>
-        <CardMatch
-          matches={data?.matches || []}
-          category={data?.category || ""}
-          team={data?.team || ""}
-        />
+        <CardMatch matches={data?.matches || []} />
       </main>
       <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
         <Footer lastUpdate={data?.lastUpdate} />

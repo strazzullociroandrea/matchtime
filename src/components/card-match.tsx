@@ -4,21 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
-import { HelpCard } from "@/components/help-card";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
-export const CardMatch = ({
-  matches,
-  category,
-  team,
-}: {
-  matches: PartitaVolley[];
-  category: string;
-  team: string;
-}) => {
-  const [showInfo, setShowInfo] = useState(false);
-
+export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
     if (typeof window !== "undefined") {
@@ -32,19 +19,7 @@ export const CardMatch = ({
 
   return (
     <>
-      <HelpCard
-        showInfo={showInfo}
-        setShowInfo={setShowInfo}
-        category={category}
-        team={team}
-      />
-
-      <div className="flex justify-end w-full px-5 sm:px-20"> 
-        <Button variant="outline" className="text-center text-muted-foreground hover:text-primary mt-5" onClick={() => setShowInfo(true)}>
-          <Info className="w-15 h-15" />
-        </Button>
-      </div>
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-20">
+      <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-10">
         {matches.map((matchSingle, index) => (
           <Card
             key={index}
@@ -78,7 +53,7 @@ export const CardMatch = ({
                 </Badge>
               </div>
 
-              <CardTitle className="text-2xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2">
+              <CardTitle className="text-xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2  lg:text-2xl">
                 <span className="text-foreground">{matchSingle.home}</span>
                 <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
                   VS

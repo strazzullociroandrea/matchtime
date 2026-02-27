@@ -1,11 +1,14 @@
-import { Dot } from "lucide-react";
+"use client";
+
+import { ChevronRight, Info, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 import { CalendarPDF } from "@/components/pdf-match";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { cn } from "@/lib/utils";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
+import { HelpCard } from "@/components/help-card";
+import { useState } from "react";
 
 export const Navbar = ({
   matches,
@@ -16,28 +19,49 @@ export const Navbar = ({
   category: string;
   team: string;
 }) => {
+  const [showInfo, setShowInfo] = useState(false);
+
   return (
-    <nav className=" border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto  py-6 ">
+    <nav className="relative border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
       
-      <div className="mb-3">
+      {/* Pulsante Info - Posizionato in alto a destra */}
+      <div className="absolute top-6 right-6 sm:right-20">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
+          onClick={() => setShowInfo(true)}
+        >
+          <Info className="w-5 h-5" />
+        </Button>
+      </div>
+
+      {/* Badge con margini originali */}
+      <div className="mb-3 ml-6">
         <Badge
           variant="outline"
-          className="text-xs font-light bg-primary/10 text-primary"
+          className="text-[10px] font-light bg-primary/10 text-primary flex items-center gap-1 w-fit"
         >
-          {category} <Dot /> {team}
+          {category} <ChevronRight className="w-3 h-3" /> {team}
         </Badge>
       </div>
-      <div className="flex items-center justify-center gap-3 mb-2">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+
+      {/* Titolo con margini originali */}
+      <div className="flex gap-3 mb-1 ml-7">
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-5xl">
           <span className="text-primary">Calendario</span> Partite
         </h1>
       </div>
-      <div className="flex items-center justify-center gap-2">
-        <p className="text-muted-foreground text-sm">
-          Sfoglia, filtra e scarica il calendario delle gare.
+
+      {/* Sottotitolo con margini originali */}
+      <div className="ml-8 gap-2">
+        <p className="text-muted-foreground text-xs sm:text-sm font-medium pl-1 border-l-2 border-primary/30 ml-1">
+          Visualizza il calendario completo delle partite della tua squadra.
         </p>
       </div>
-      <div className="mt-4 flex justify-center w-full">
+
+      {/* Download Link con margini originali */}
+      <div className="mt-4 flex ml-8 w-full">
         <PDFDownloadLink
           document={
             <CalendarPDF matches={matches} category={category} team={team} />
@@ -50,11 +74,20 @@ export const Navbar = ({
               <Download
                 className={cn("w-5 h-5", loading && "animate-bounce")}
               />
-              Scarica calendario
+              <span className="text-sm">
+                {loading ? "Generazione..." : "Scarica calendario"}
+              </span>
             </>
           )}
         </PDFDownloadLink>
       </div>
+
+      <HelpCard
+        showInfo={showInfo}
+        setShowInfo={setShowInfo}
+        category={category}
+        team={team}
+      />
     </nav>
   );
 };
