@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
-import { HelpCard } from "@/components/help-card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +16,6 @@ export const CardMatch = ({
   category: string;
   team: string;
 }) => {
-  const [showInfo, setShowInfo] = useState(false);
 
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
@@ -32,19 +30,8 @@ export const CardMatch = ({
 
   return (
     <>
-      <HelpCard
-        showInfo={showInfo}
-        setShowInfo={setShowInfo}
-        category={category}
-        team={team}
-      />
-
-      <div className="flex justify-end w-full px-5 sm:px-20"> 
-        <Button variant="outline" className="text-center text-muted-foreground hover:text-primary mt-5" onClick={() => setShowInfo(true)}>
-          <Info className="w-15 h-15" />
-        </Button>
-      </div>
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-20">
+      
+      <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-10">
         {matches.map((matchSingle, index) => (
           <Card
             key={index}
