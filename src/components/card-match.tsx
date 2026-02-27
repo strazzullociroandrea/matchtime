@@ -4,19 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
-export const CardMatch = ({
-  matches,
-  category,
-  team,
-}: {
-  matches: PartitaVolley[];
-  category: string;
-  team: string;
-}) => {
-
+export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
     if (typeof window !== "undefined") {
@@ -30,7 +19,6 @@ export const CardMatch = ({
 
   return (
     <>
-      
       <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 sm:p-10">
         {matches.map((matchSingle, index) => (
           <Card
@@ -65,7 +53,7 @@ export const CardMatch = ({
                 </Badge>
               </div>
 
-              <CardTitle className="text-2xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2">
+              <CardTitle className="text-xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2  lg:text-2xl">
                 <span className="text-foreground">{matchSingle.home}</span>
                 <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
                   VS
