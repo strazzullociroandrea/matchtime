@@ -60,6 +60,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 50,
   },
+  footerUpdate: {
+    fontSize: 6,
+    position: "absolute",
+    marginTop: 12,
+    right: 2,
+    fontStyle: "italic",
+    color: "#666",
+  },
 });
 
 export const CalendarPDF = ({
@@ -145,7 +153,13 @@ export const CalendarPDF = ({
           cambiamenti di orario non riportati. Consultare sempre il portale
           ufficiale per le comunicazioni formali.
         </Text>
-        <Text>Last Update: {new Date().toLocaleDateString("it-IT")}</Text>
+        <Text style={styles.footerUpdate}>
+          Last Update: {new Date().toLocaleDateString("it-IT")} alle{" "}
+          {new Date().toLocaleTimeString("it-IT", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Text>
       </View>
     </Page>
   </Document>
