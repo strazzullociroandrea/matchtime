@@ -24,7 +24,6 @@ export const Navbar = ({
   return (
     <nav className="relative border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
       
-      {/* Pulsante Info - Posizionato in alto a destra */}
       <div className="absolute top-6 right-6 sm:right-20">
         <Button
           variant="outline"
@@ -36,31 +35,28 @@ export const Navbar = ({
         </Button>
       </div>
 
-      {/* Badge con margini originali */}
+      
       <div className="mb-3 ml-6">
         <Badge
           variant="outline"
           className="text-[10px] font-light bg-primary/10 text-primary flex items-center gap-1 w-fit"
         >
-          {category} <ChevronRight className="w-3 h-3" /> {team}
+          {team} <ChevronRight className="w-3 h-3" /> {category}
         </Badge>
       </div>
 
-      {/* Titolo con margini originali */}
       <div className="flex gap-3 mb-1 ml-7">
         <h1 className="text-2xl font-extrabold tracking-tight sm:text-5xl">
           <span className="text-primary">Calendario</span> Partite
         </h1>
       </div>
 
-      {/* Sottotitolo con margini originali */}
       <div className="ml-8 gap-2">
         <p className="text-muted-foreground text-xs sm:text-sm font-medium pl-1 border-l-2 border-primary/30 ml-1">
           Visualizza il calendario completo delle partite della tua squadra.
         </p>
       </div>
 
-      {/* Download Link con margini originali */}
       <div className="mt-4 flex ml-8 w-full">
         <PDFDownloadLink
           document={
