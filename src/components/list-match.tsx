@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { cn } from "@/lib/utils";
 
-export const CardMatch = ({ matches }: { matches: PartitaVolley[] }) => {
+export const ListMatch = ({ matches }: { matches: PartitaVolley[] }) => {
   const getNavigationLink = (place: string) => {
     const query = encodeURIComponent(place);
     if (typeof window !== "undefined") {
