@@ -64,7 +64,7 @@ export const SettingsCard = ({
                         htmlFor="notifications"
                         className="text-sm font-bold text-foreground cursor-pointer"
                       >
-                        Notifiche Push
+                        Notifiche Push (Presto disponibile)
                       </label>
                       <p className="text-xs text-muted-foreground">
                         Partite della settimana
@@ -73,6 +73,7 @@ export const SettingsCard = ({
                     <Switch
                       id="notifications"
                       className="data-[state=checked]:bg-primary"
+                      disabled
                     />
                   </div>
 
@@ -94,7 +95,7 @@ export const SettingsCard = ({
                       onCheckedChange={(checked) =>
                         setTheme(checked ? "dark" : "light")
                       }
-                      className="data-[state=checked]:bg-primary"
+                      className="data-[state=checked]:bg-primary "
                     />
                   </div>
                 </div>
