@@ -1,10 +1,8 @@
 "use client";
-
 import { api } from "@/trpc/react";
-import { CardMatch } from "@/components/card-match";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-
+import { ListMatch } from "@/components/list-match";
 export default function Home() {
   const { data, isLoading } = api.orario.getInfo.useQuery();
 
@@ -29,7 +27,7 @@ export default function Home() {
         />
       </header>
       <main>
-        <CardMatch matches={data?.matches || []} />
+        <ListMatch matches={data?.matches || []} />
       </main>
       <div className="mt-14 mb-14 mx-auto max-w-7xl px-6">
         <Footer lastUpdate={data?.lastUpdate} />
