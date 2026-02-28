@@ -9,6 +9,7 @@ const envSchema = z.object({
   HOME_PLACE: z.string(),
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string(),
   VAPID_PRIVATE_KEY: z.string(),
+  MAIL_ADMIN: z.string().email(),
 });
 
 export const env = process.env.SKIP_ENV_VALIDATION
