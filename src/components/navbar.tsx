@@ -1,12 +1,12 @@
 "use client";
 
-import { ChevronRight, Info, Download } from "lucide-react";
+import { ChevronRight, Settings, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarPDF } from "@/components/pdf-match";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
-import { HelpCard } from "@/components/help-card";
+import { SettingsCard } from "@/components/settings-card";
 import { useState } from "react";
 
 export const Navbar = ({
@@ -18,10 +18,10 @@ export const Navbar = ({
   category: string;
   team: string;
 }) => {
-  const [showInfo, setShowInfo] = useState(false);
+  const [show, setShow] = useState(false);
 
   return (
-    <nav className="relative border-b-2 border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
+    <nav className="relative border-b border-slate-800 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
       <div className="absolute top-6 right-6 sm:right-20">
         <PDFDownloadLink
           document={
@@ -39,16 +39,16 @@ export const Navbar = ({
           variant="outline"
           size="icon"
           className="w-10 h-10 rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
-          onClick={() => setShowInfo(true)}
+          onClick={() => setShow(true)}
         >
-          <Info className="w-5 h-5" />
+          <Settings className="w-5 h-5" />
         </Button>
       </div>
 
       <div className="mb-3 ml-6">
         <Badge
           variant="outline"
-          className="text-[10px] font-light bg-primary/10 text-primary flex items-center gap-1 w-fit"
+          className="text-[10px] font-bold bg-primary/10 text-primary flex items-center gap-1 "
         >
           {team} <ChevronRight className="w-3 h-3" /> {category}
         </Badge>
@@ -65,11 +65,10 @@ export const Navbar = ({
           Visualizza il calendario completo delle partite della tua squadra.
         </p>
       </div>
- 
 
-      <HelpCard
-        showInfo={showInfo}
-        setShowInfo={setShowInfo}
+      <SettingsCard
+        show={show}
+        setShow={setShow}
         category={category}
         team={team}
       />
