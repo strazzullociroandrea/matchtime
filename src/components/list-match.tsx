@@ -56,7 +56,7 @@ export const ListMatch = ({ matches }: { matches: PartitaVolley[] }) => {
 
                 <CardTitle className="text-xl font-black italic uppercase tracking-tighter flex flex-wrap items-center gap-2  lg:text-2xl">
                   <span className="text-foreground">{matchSingle.home}</span>
-                  <span className="text-primary not-italic font-light text-sm tracking-normal opacity-50">
+                  <span className="text-primary not-italic font-bold text-sm tracking-normal opacity-80">
                     VS
                   </span>
                   <span className="text-foreground">{matchSingle.guest}</span>
