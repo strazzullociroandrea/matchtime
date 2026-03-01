@@ -5,7 +5,6 @@ import asyncJob from "@/server/api/routers/api/asyncJob";
 import { env } from "@/env";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import fs from "fs";
-import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
 /**
  * Function to parse a date string in the format "dd/MM/yyyy" and return the corresponding timestamp. It splits the date string into day, month, and year components, creates a Date object using these components, and returns the timestamp (in milliseconds) of that date.
  * @param dateStr A string representing a date in the format "dd/MM/yyyy".
@@ -82,7 +81,7 @@ const fetchAndCacheMatches = unstable_cache(
         "Data prepared successfully.",
       );
 
-      await sendWeeklyReminder().catch(console.error);
+      
 
       return {
         matches: orderByStatus(content),

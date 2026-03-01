@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { subscriptions } from "@/lib/schemas/db-schema";
 webpush.setVapidDetails(
   "mailto:" + env.EMAIL_ADMIN,
-  env.NEXT_PUBLIC_VAPID_KEY,
+  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   env.PRIVATE_VAPID_KEY,
 );
 

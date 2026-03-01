@@ -5,9 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
-import { ScrollArea } from "@/components/ui/scroll-area"; 
-
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { api } from "@/trpc/react";
+import { useEffect } from "react";
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -32,8 +33,20 @@ export const SettingsCard = ({
   team: string;
 }) => {
   const { theme, setTheme } = useTheme();
-  
-   
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
+  const subscribtionHandler = api.notification.manageSubscribtion.useMutation({
+    onSuccess: () => {
+      alert("Iscrizione aggiornata con successo!");
+    },
+    onError: (err) => {
+      alert("Errore durante l'aggiornamento dell'iscrizione: " + err.message);
+    },
+  });
+
   return (
     <Dialog open={show} onOpenChange={setShow}>
       <DialogTitle className="sr-only">Impostazioni</DialogTitle>
@@ -100,7 +113,56 @@ export const SettingsCard = ({
                           <p className="text-xs text-muted-foreground">
                             Avvisi su partite e variazioni orari.
                           </p>
-                        </div> 
+                        </div>
+                        <Switch
+                          id="push-notifications"
+                          checked={false}
+                          onCheckedChange={async (enabled) => {
+                            if (enabled) {
+                              const result =
+                                await Notification.requestPermission();
+
+                              if (result !== "granted") {
+                                alert(
+                                  "Permesso per notifiche push negato. Non potrai ricevere notifiche.",
+                                );
+                                return;
+                              }
+                              try {
+                                const registration =
+                                  await navigator.serviceWorker.ready;
+
+                                const sub =
+                                  await registration.pushManager.subscribe({
+                                    userVisibleOnly: true,
+                                    applicationServerKey:
+                                      urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+                                  });
+
+                                const subJSON = sub.toJSON();
+
+                                subscribtionHandler.mutate({
+                                  subscription: {
+                                    endpoint: subJSON.endpoint!,
+                                    keys: {
+                                      p256dh: subJSON.keys!.p256dh!,
+                                      auth: subJSON.keys!.auth!,
+                                    },
+                                  },
+                                });
+
+                                console.log(
+                                  "Sottoscrizione inviata con successo!",
+                                );
+                              } catch (error) {
+                                console.error(
+                                  "L'utente ha negato il permesso o errore:",
+                                  error,
+                                );
+                              }
+                            }
+                          }}
+                        />
                       </div>
                     </div>
                   </ScrollArea>

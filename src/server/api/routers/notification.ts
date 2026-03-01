@@ -2,8 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { subscriptions } from "@/lib/schemas/db-schema";
-import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
-import { eq } from "drizzle-orm";
+import { eq, is } from "drizzle-orm";
 export const NotificationRouter = createTRPCRouter({
   manageSubscribtion: publicProcedure
     .input(
@@ -50,6 +49,7 @@ export const NotificationRouter = createTRPCRouter({
         }
       } catch (error) {
         console.error("Errore durante la sottoscrizione:", error);
+        throw error;
       }
     }),
 });
