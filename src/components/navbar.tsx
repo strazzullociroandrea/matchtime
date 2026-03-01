@@ -28,17 +28,16 @@ export const Navbar = ({
             <CalendarPDF matches={matches} category={category} team={team} />
           }
           fileName={`calendario_${category}_${team}.pdf`}
-          className="mr-5 transition-colors"
+          className="mr-2 inline-block"
         >
-          <span className="inline-flex items-center gap-1 border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary rounded-full px-4 py-2 text-sm font-light">
-            <Download className="w-5 h-5" />
-            <span className="hidden sm:inline">Download PDF</span>
+          <span className="bg-background inline-flex text-muted-foreground items-center justify-center rounded-full border border-input  hover:border-primary hover:text-primary h-10 w-10 text-sm font-medium">
+            <Download className="h-4 w-4" />
           </span>
         </PDFDownloadLink>
         <Button
-          variant="outline"
+          variant="settings"
           size="icon"
-          className="w-10 h-10 rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
+          className=" w-10 h-10 rounded-full text-muted-foreground "
           onClick={() => setShowInfo(true)}
         >
           <Info className="w-5 h-5" />
