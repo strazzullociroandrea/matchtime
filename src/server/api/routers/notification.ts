@@ -3,8 +3,9 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { subscriptions } from "@/lib/schemas/db-schema";
 import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
+import { eq } from "drizzle-orm";
 export const NotificationRouter = createTRPCRouter({
-  subscribe: publicProcedure
+  manageSubscribtion: publicProcedure
     .input(
       z.object({
         subscription: z.object({
@@ -20,25 +21,34 @@ export const NotificationRouter = createTRPCRouter({
       try {
         const { endpoint, keys } = input.subscription;
 
-        await db
-          .insert(subscriptions)
-          .values({
-            endpoint,
-            p256dh: keys.p256dh,
-            auth: keys.auth,
-          })
-          .onDuplicateKeyUpdate({
-            set: {
+        const existing = await db
+          .select()
+          .from(subscriptions)
+          .where(eq(subscriptions.endpoint, endpoint))
+          .limit(1);
+
+        if (!existing || existing.length === 0) {
+          await db
+            .insert(subscriptions)
+            .values({
+              endpoint,
               p256dh: keys.p256dh,
               auth: keys.auth,
-            },
-          });
+            })
+            .onDuplicateKeyUpdate({
+              set: {
+                p256dh: keys.p256dh,
+                auth: keys.auth,
+              },
+            });
+        } else {
+          await db
+            .delete(subscriptions)
+            .where(eq(subscriptions.endpoint, endpoint));
+        }
         return { success: true };
       } catch (error) {
         console.error("Errore durante la sottoscrizione:", error);
       }
     }),
-  sendWeeklyReminder: publicProcedure.mutation(async () => {
-    return await sendWeeklyReminder();
-  }),
 });

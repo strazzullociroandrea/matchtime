@@ -2,7 +2,6 @@ import webpush from "web-push";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { subscriptions } from "@/lib/schemas/db-schema";
-
 webpush.setVapidDetails(
   "mailto:" + env.EMAIL_ADMIN,
   env.NEXT_PUBLIC_VAPID_KEY,
@@ -14,6 +13,8 @@ export const sendPushNotification = async (payload: string) => {
     successful: 0,
     failed: 0,
   };
+
+  console.log("[LOG] Starting to send notifications");
 
   const allSubscriptions = await db.select().from(subscriptions);
 
@@ -30,10 +31,22 @@ export const sendPushNotification = async (payload: string) => {
         payload,
       );
 
+      console.log(
+        "[LOG] Notification number " +
+          (results.successful + 1) +
+          " sent successfully.",
+      );
+
       results.successful++;
     } catch (error) {
+      console.log(
+        "[ERROR] Failed to send notification number " +
+          (results.failed + 1) +
+          " cause: ",
+        error,
+      );
       results.failed++;
-      //await handlePushError( error, subscription );
     }
   }
+  return results;
 };

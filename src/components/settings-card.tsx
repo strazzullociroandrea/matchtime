@@ -36,7 +36,7 @@ export const SettingsCard = ({
   const [isPushEnabled, setIsPushEnabled] = useState(false);
   const [loadingPush, setLoadingPush] = useState(false);
 
-  const subscribeMutation = api.notification.subscribe.useMutation({
+  /*const subscribeMutation = api.notification.subscribe.useMutation({
     onSuccess: () => {
       setIsPushEnabled(true);
     },
@@ -45,7 +45,7 @@ export const SettingsCard = ({
       setIsPushEnabled(false);
       alert("Errore nel salvataggio della sottoscrizione.");
     },
-  });
+  });*/
 
   // Sincronizza lo stato dello switch con la realtà del browser
   useEffect(() => {
