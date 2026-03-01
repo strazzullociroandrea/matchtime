@@ -24,12 +24,10 @@ const handler = async (req: NextRequest) => {
         uid: `${match.home}-${match.guest}-${match.date}`
           .replace(/\s+/g, "")
           .toLowerCase(),
-        start: [year!, month!, day!, hour!, minute!],
-        startInputType: "local",
-        startOutputType: "local",
+        start: [year!, month!, day!, hour! - 1, minute!],
         duration: { hours: 2, minutes: 0 },
-        title: `🏐 ${match.home} vs ${match.guest}`,
-        description: `Partita: ${match.home} vs ${match.guest}. Stato: ${match.status}`,
+        title: `PARTITA: ${match.home} vs ${match.guest}`,
+        description: `${match.home} vs ${match.guest}.`,
         location: match.place || "Sede da definire",
         categories: ["Partita di Pallavolo"],
         status: "CONFIRMED",
