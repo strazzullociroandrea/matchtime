@@ -32,7 +32,7 @@ export const Navbar = ({
         >
           <span className="inline-flex items-center gap-1 border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary rounded-full px-4 py-2 text-sm font-light">
             <Download className="w-5 h-5" />
-            Download <span className="hidden sm:inline"> PDF</span>
+            <span className="hidden sm:inline">Download PDF</span>
           </span>
         </PDFDownloadLink>
         <Button
@@ -65,7 +65,6 @@ export const Navbar = ({
           Visualizza il calendario completo delle partite della tua squadra.
         </p>
       </div>
- 
 
       <HelpCard
         showInfo={showInfo}
