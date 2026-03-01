@@ -21,7 +21,7 @@ export const Navbar = ({
   const [show, setShow] = useState(false);
 
   return (
-    <nav className="relative border-b border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
+    <nav className="relative light:border-b  border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
       <div className="absolute top-6 right-6 sm:right-20">
         <PDFDownloadLink
           document={
