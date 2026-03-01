@@ -25,13 +25,15 @@ const handler = async (req: NextRequest) => {
           .replace(/\s+/g, "")
           .toLowerCase(),
         start: [year!, month!, day!, hour!, minute!],
+        startInputType: "local",
+        startOutputType: "local",
         duration: { hours: 2, minutes: 0 },
         title: `🏐 ${match.home} vs ${match.guest}`,
         description: `Partita: ${match.home} vs ${match.guest}. Stato: ${match.status}`,
         location: match.place || "Sede da definire",
         categories: ["Partita di Pallavolo"],
         status: "CONFIRMED",
-        busyStatus: "BUSY" 
+        busyStatus: "BUSY",
       };
     });
 
