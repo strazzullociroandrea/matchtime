@@ -7,8 +7,6 @@ const envSchema = z.object({
   TEAM: z.string(),
   URL_DOWNLOAD_SITE: z.string(),
   HOME_PLACE: z.string(),
-  NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string(),
-  VAPID_PRIVATE_KEY: z.string(),
 });
 
 export const env = process.env.SKIP_ENV_VALIDATION
