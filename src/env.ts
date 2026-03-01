@@ -7,7 +7,7 @@ const envSchema = z.object({
   TEAM: z.string(),
   URL_DOWNLOAD_SITE: z.string(),
   HOME_PLACE: z.string(),
-  NEXT_PUBLIC_VAPID_KEY: z.string(),
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string(),
   PRIVATE_VAPID_KEY: z.string(),
   EMAIL_ADMIN: z.email(),
   URL_DB: z.string(),

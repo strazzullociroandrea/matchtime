@@ -4,6 +4,7 @@ import { z } from "zod";
 import { MatchSchema } from "@/lib/schemas/match-schema";
 import asyncJob from "@/server/api/routers/api/asyncJob";
 import fetchAndCache from "@/server/api/routers/api/getInfo/fetchAndCache";
+import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
 
 export const orarioRouter = createTRPCRouter({
   getInfo: publicProcedure
@@ -18,14 +19,23 @@ export const orarioRouter = createTRPCRouter({
     )
     .query(async () => {
       try {
-
-        return await asyncJob(
+        const data = await asyncJob(
           "Fetching match data...",
           async () => {
             return await fetchAndCache();
           },
           "Match data fetched successfully.",
         );
+
+        await asyncJob(
+          "Sending weekly reminder...",
+          async () => {
+            return await sendWeeklyReminder({ matches: data.matches });
+          },
+          "Weekly reminder sent successfully.",
+        );
+
+        return data;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
 

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import fetchAndCache from "@/server/api/routers/api/getInfo/fetchAndCache";
 import { sendPushNotification } from "@/lib/web-push";
+import { PartitaVolley } from "@/lib/schemas/match-schema";
 
 /**
  * Function to parse match date from "DD/MM/YYYY" format and return a Date object.
@@ -42,10 +42,12 @@ const daysUntil = (date: Date) => {
  * Function to send a weekly reminder notification for matches that are scheduled exactly 7 days from the current date.
  * @returns An object indicating whether the notification was sent, the reason if it was not sent, and the count of matches that triggered the notification.
  */
-export const sendWeeklyReminder = async () => {
+export const sendWeeklyReminder = async ({
+  matches,
+}: {
+  matches: PartitaVolley[];
+}) => {
   try {
-    const { matches } = await fetchAndCache();
-
     const filtered = matches.filter((match) => {
       if (match.status === "Conclusa" || match.status === "Rinviata")
         return false;
@@ -53,7 +55,7 @@ export const sendWeeklyReminder = async () => {
       const matchDate = parseMatchDate(match.date);
       if (!matchDate) return false;
 
-      return daysUntil(matchDate) === 7;
+      return daysUntil(matchDate) >= 0;
     });
 
     if (filtered.length === 0) {
