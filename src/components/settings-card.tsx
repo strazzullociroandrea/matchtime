@@ -42,15 +42,10 @@ export const SettingsCard = ({
                       Generali
                     </span>
                     <p className="italic">
-                      <span className="font-semibold   ">
-                        Squadra:
-                      </span>{" "}
-                      {team}
+                      <span className="font-semibold   ">Squadra:</span> {team}
                     </p>
                     <p className="italic">
-                      <span className="font-semibold  ">
-                        Categoria:
-                      </span>{" "}
+                      <span className="font-semibold  ">Categoria:</span>{" "}
                       {category}
                     </p>
                   </CardContent>
@@ -72,7 +67,14 @@ export const SettingsCard = ({
                           Attiva la modalità scura come predefinita.
                         </p>
                       </div>
-                      <Switch id="dark-theme" checked={theme === "dark"} onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")} />
+                      <Switch
+                        id="dark-theme"
+                        defaultChecked={theme === "dark"}
+                        checked={theme === "dark"}
+                        onCheckedChange={(checked) =>
+                          setTheme(checked ? "dark" : "light")
+                        }
+                      />
                     </CardContent>
                   </Card>
                 </div>
