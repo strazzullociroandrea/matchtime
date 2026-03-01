@@ -41,12 +41,13 @@ export const NotificationRouter = createTRPCRouter({
                 auth: keys.auth,
               },
             });
+          return { operation: "subscribe", success: true };
         } else {
           await db
             .delete(subscriptions)
             .where(eq(subscriptions.endpoint, endpoint));
+          return { operation: "unsubscribe", success: true };
         }
-        return { success: true };
       } catch (error) {
         console.error("Errore durante la sottoscrizione:", error);
       }

@@ -5,10 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState, useEffect } from "react";
-import { api } from "@/trpc/react";
-import { Loader2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area"; 
+
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -33,97 +32,8 @@ export const SettingsCard = ({
   team: string;
 }) => {
   const { theme, setTheme } = useTheme();
-  const [isPushEnabled, setIsPushEnabled] = useState(false);
-  const [loadingPush, setLoadingPush] = useState(false);
-
-  /*const subscribeMutation = api.notification.subscribe.useMutation({
-    onSuccess: () => {
-      setIsPushEnabled(true);
-    },
-    onError: (err) => {
-      console.error("Errore salvataggio server:", err);
-      setIsPushEnabled(false);
-      alert("Errore nel salvataggio della sottoscrizione.");
-    },
-  });*/
-
-  // Sincronizza lo stato dello switch con la realtà del browser
-  useEffect(() => {
-    const checkSubscription = async () => {
-      if ("serviceWorker" in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        setIsPushEnabled(!!subscription);
-      }
-    };
-    if (show) checkSubscription();
-  }, [show]);
-
-  const handlePushChange = async (enabled: boolean) => {
-    if (!enabled) {
-      setLoadingPush(true);
-      try {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          await subscription.unsubscribe();
-        }
-        setIsPushEnabled(false);
-      } catch (e) {
-        console.error("Errore disiscrizione:", e);
-      } finally {
-        setLoadingPush(false);
-      }
-      return;
-    }
-
-    setLoadingPush(true);
-    try {
-      // 1. Chiedi il permesso esplicito
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        throw new Error("Permesso notifiche negato");
-      }
-
-      // 2. Registra o ottieni il Service Worker
-      const registration = await navigator.serviceWorker.ready;
-
-      // ATTENZIONE: Usa NEXT_PUBLIC_ per esportare la chiave al browser
-      const publicKey = process.env.NEXT_PUBLIC_VAPID_KEY;
-
-      if (!publicKey) {
-        throw new Error(
-          "Chiave VAPID pubblica non trovata nelle variabili d'ambiente",
-        );
-      }
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
-
-      const subJSON = subscription.toJSON();
-
-      if (subJSON.endpoint && subJSON.keys?.p256dh && subJSON.keys?.auth) {
-        subscribeMutation.mutate({
-          subscription: {
-            endpoint: subJSON.endpoint,
-            keys: {
-              p256dh: subJSON.keys.p256dh,
-              auth: subJSON.keys.auth,
-            },
-          },
-        });
-      }
-    } catch (error) {
-      console.error("Errore attivazione push:", error);
-      alert(error instanceof Error ? error.message : "Errore attivazione push");
-      setIsPushEnabled(false);
-    } finally {
-      setLoadingPush(false);
-    }
-  };
-
+  
+   
   return (
     <Dialog open={show} onOpenChange={setShow}>
       <DialogTitle className="sr-only">Impostazioni</DialogTitle>
@@ -163,7 +73,6 @@ export const SettingsCard = ({
                   </span>
                   <ScrollArea className="w-full h-fit">
                     <div className="space-y-3">
-                      {/* TEMA */}
                       <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
                         <Label
                           htmlFor="dark-theme"
@@ -174,13 +83,12 @@ export const SettingsCard = ({
                         <Switch
                           id="dark-theme"
                           checked={theme === "dark"}
-                          onCheckedChange={(c) =>
-                            setTheme(c ? "dark" : "light")
+                          onCheckedChange={(t) =>
+                            setTheme(t ? "dark" : "light")
                           }
                         />
                       </div>
 
-                      {/* NOTIFICHE */}
                       <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
                         <div className="space-y-1">
                           <Label
@@ -192,20 +100,7 @@ export const SettingsCard = ({
                           <p className="text-xs text-muted-foreground">
                             Avvisi su partite e variazioni orari.
                           </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {(loadingPush || subscribeMutation.isPending) && (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          )}
-                          <Switch
-                            id="push-notifications"
-                            checked={isPushEnabled}
-                            onCheckedChange={handlePushChange}
-                            disabled={
-                              loadingPush || subscribeMutation.isPending
-                            }
-                          />
-                        </div>
+                        </div> 
                       </div>
                     </div>
                   </ScrollArea>
