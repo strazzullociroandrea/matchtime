@@ -13,6 +13,9 @@ const handler = async (req: NextRequest) => {
         const [hour, minute] = match.hour.split(":").map(Number);
 
         return {
+          uid: `${match.home}-${match.guest}-${match.date}`
+            .replace(/\s+/g, "")
+            .toLowerCase(),
           start: [year, month, day, hour, minute],
           duration: { hours: 2, minutes: 0 },
           title: `${match.home} vs ${match.guest} - ${match.status}`,
