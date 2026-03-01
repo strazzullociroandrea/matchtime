@@ -3,6 +3,7 @@ import { api } from "@/trpc/react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ListMatch } from "@/components/list-match";
+
 export default function Home() {
   const { data, isLoading } = api.orario.getInfo.useQuery();
 
