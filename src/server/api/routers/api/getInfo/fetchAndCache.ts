@@ -5,7 +5,7 @@ import asyncJob from "@/server/api/routers/api/asyncJob";
 import { env } from "@/env";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import fs from "fs";
-
+import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
 /**
  * Function to parse a date string in the format "dd/MM/yyyy" and return the corresponding timestamp. It splits the date string into day, month, and year components, creates a Date object using these components, and returns the timestamp (in milliseconds) of that date.
  * @param dateStr A string representing a date in the format "dd/MM/yyyy".
@@ -47,7 +47,10 @@ const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
   });
 };
 /**
- * Function to fetch and cache volleyball match data. It checks if a data retrieval process is already in progress, and if not, it prepares the data by calling the prepareData function, which retrieves and processes the match data. The result is then cached for 12 hours (43200 seconds) with the tag "matches". If an error occurs during the process, it throws a TRPCError with an appropriate message.
+ * Function to fetch and cache volleyball match data. It checks if a data retrieval process is already in progress, and if not,
+ * it prepares the data by calling the prepareData function, which retrieves and processes the match data, send notification and then return results.
+ * The result is then cached for 12 hours (43200 seconds) with the tag "matches".
+ * If an error occurs during the process, it throws a TRPCError with an appropriate message.
  *
  * @returns An object containing the matches data, the last update timestamp, the team, and the category.
  * @throws TRPCError if there is an error during the data retrieval process or if a retrieval process is already in progress.
@@ -78,6 +81,8 @@ const fetchAndCacheMatches = unstable_cache(
         },
         "Data prepared successfully.",
       );
+
+      await sendWeeklyReminder().catch(console.error);
 
       return {
         matches: orderByStatus(content),
