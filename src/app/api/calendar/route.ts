@@ -34,7 +34,7 @@ const handler = async (req: NextRequest) => {
         categories: ["Partita di Pallavolo"],
         status: "CONFIRMED",
         busyStatus: "BUSY",
-        alarm: [
+        alarms: [
           {
             action: "display",
             trigger: { hours: 168, minutes: 0, before: true },
