@@ -28,12 +28,24 @@ const handler = async (req: NextRequest) => {
         startOutputType: "local",
         start: [year!, month!, day!, hour!, minute!],
         duration: { hours: 2, minutes: 0 },
-        title: `PARTITA: ${match.home} vs ${match.guest}`,
-        description: `${match.home} vs ${match.guest}.`,
+        title: `PARTITA: ${match.home} VS ${match.guest}`,
+        description: `${match.home} VS ${match.guest}.`,
         location: match.place || "Sede da definire",
         categories: ["Partita di Pallavolo"],
         status: "CONFIRMED",
         busyStatus: "BUSY",
+        alarm: [
+          {
+            action: "display",
+            trigger: { hours: 168, minutes: 0, before: true },
+            description: `Promemoria: ${match.home} VS ${match.guest} tra 7 giorni.`,
+          },
+          {
+            action: "display",
+            trigger: { hours: 72, minutes: 0, before: true },
+            description: `Promemoria: ${match.home} VS ${match.guest} tra 3 giorni.`,
+          }
+        ]
       };
     });
 
