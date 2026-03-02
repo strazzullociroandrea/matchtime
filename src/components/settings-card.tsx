@@ -127,7 +127,6 @@ export const SettingsCard = ({
                         <Switch
                           id="push-notifications"
                           checked={false}
-                          disabled={true}
                           onCheckedChange={async (enabled) => {
                             if (enabled) {
                               const result =
