@@ -61,7 +61,7 @@ export const SettingsCard = ({
                   Impostazioni
                 </span>
                 <h2 className="text-3xl font-black tracking-tighter">
-                  Match Time<span className="text-primary">.</span>
+                  <span className="text-primary">Match</span> Time
                 </h2>
               </div>
 
