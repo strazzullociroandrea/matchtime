@@ -68,13 +68,13 @@ export const SettingsCard = ({
               <div className="space-y-4">
                 <Card className="bg-muted-foreground/10 shadow-sm border-none">
                   <CardContent className="p-4 pt-4">
-                    <span className="text-primary font-bold text-[10px] uppercase tracking-widest">
+                    <span className="text-primary font-bold text-[12px] uppercase tracking-widest">
                       Generali
                     </span>
-                    <p className="italic text-sm mt-1">
+                    <p className="italic text-sm mt-4">
                       <span className="font-semibold">Squadra:</span> {team}
                     </p>
-                    <p className="italic text-sm">
+                    <p className="italic text-sm mt-3">
                       <span className="font-semibold">Categoria:</span>{" "}
                       {category}
                     </p>
