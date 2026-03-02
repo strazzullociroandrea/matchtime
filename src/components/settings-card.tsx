@@ -118,7 +118,7 @@ export const SettingsCard = ({
                             htmlFor="push-notifications"
                             className="text-base font-semibold"
                           >
-                            Notifiche push
+                            Notifiche push (Presto disponibile)
                           </Label>
                           <p className="text-xs text-muted-foreground">
                             Avvisi su partite e variazioni orari.
@@ -127,6 +127,7 @@ export const SettingsCard = ({
                         <Switch
                           id="push-notifications"
                           checked={false}
+                          disabled={true}
                           onCheckedChange={async (enabled) => {
                             if (enabled) {
                               const result =
@@ -156,7 +157,6 @@ export const SettingsCard = ({
                                     },
                                   },
                                 });
- 
                               } catch (error) {
                                 console.error(
                                   "[ERROR] Errore durante la sottoscrizione alle notifiche push:",
