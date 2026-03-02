@@ -37,15 +37,15 @@ const handler = async (req: NextRequest) => {
         alarms: [
           {
             action: "display",
-            trigger: { hours: 168, minutes: 0, before: true },
-            description: `Promemoria: ${match.home} VS ${match.guest} tra 7 giorni.`,
+            description: `Promemoria: ${match.home} VS ${match.guest} tra 7 giorni`,
+            trigger: { weeks: 1, before: true }, 
           },
           {
             action: "display",
-            trigger: { hours: 72, minutes: 0, before: true },
-            description: `Promemoria: ${match.home} VS ${match.guest} tra 3 giorni.`,
-          }
-        ]
+            description: `Promemoria: ${match.home} VS ${match.guest} tra 3 giorni`,
+            trigger: { days: 3, before: true },
+          },
+        ],
       };
     });
 
