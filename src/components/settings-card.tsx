@@ -33,7 +33,7 @@ export const SettingsCard = ({
   team: string;
 }) => {
   const { theme, setTheme } = useTheme();
-  console.log("[THEME]", theme === "dark");
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js");
