@@ -27,13 +27,13 @@ export const orarioRouter = createTRPCRouter({
           "Match data fetched successfully.",
         );
 
-        await asyncJob(
+        /*await asyncJob(
           "Sending weekly reminder...",
           async () => {
             return await sendWeeklyReminder({ matches: data.matches });
           },
           "Weekly reminder sent successfully.",
-        );
+        );*/
 
         return data;
       } catch (error) {

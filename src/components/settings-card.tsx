@@ -33,6 +33,7 @@ export const SettingsCard = ({
   team: string;
 }) => {
   const { theme, setTheme } = useTheme();
+  console.log("[THEME]", theme === "dark");
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js");
@@ -95,7 +96,7 @@ export const SettingsCard = ({
                         </Label>
                         <Switch
                           id="dark-theme"
-                          checked={theme === "dark"}
+                          checked={theme !== "light"}
                           onCheckedChange={(t) =>
                             setTheme(t ? "dark" : "light")
                           }
@@ -108,7 +109,7 @@ export const SettingsCard = ({
                             htmlFor="push-notifications"
                             className="text-base font-semibold"
                           >
-                            Notifiche push
+                            Notifiche push (Presto disponibile)
                           </Label>
                           <p className="text-xs text-muted-foreground">
                             Avvisi su partite e variazioni orari.
@@ -117,6 +118,7 @@ export const SettingsCard = ({
                         <Switch
                           id="push-notifications"
                           checked={false}
+                          disabled={true}
                           onCheckedChange={async (enabled) => {
                             if (enabled) {
                               const result =
