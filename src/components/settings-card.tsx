@@ -10,6 +10,11 @@ import { api } from "@/trpc/react";
 import { useEffect } from "react";
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
+/**
+ * Function to parse a base64 string to a Uint8Array, used for push notifications subscription.
+ * @param base64String The base64 string to convert.
+ * @returns  A Uint8Array representing the decoded base64 string.
+ */
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -33,18 +38,22 @@ export const SettingsCard = ({
   team: string;
 }) => {
   const { theme, setTheme } = useTheme();
-  console.log("[THEME]", theme === "dark");
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js");
     }
   }, []);
+
   const subscribtionHandler = api.notification.manageSubscribtion.useMutation({
     onSuccess: () => {
-      alert("Iscrizione aggiornata con successo!");
+      console.log("[INFO] Sottoscrizione aggiornata con successo!");
     },
     onError: (err) => {
-      alert("Errore durante l'aggiornamento dell'iscrizione: " + err.message);
+      console.log(
+        "[ERROR] Errore durante l'aggiornamento dell'iscrizione: " +
+          err.message,
+      );
     },
   });
 
@@ -61,20 +70,20 @@ export const SettingsCard = ({
                   Impostazioni
                 </span>
                 <h2 className="text-3xl font-black tracking-tighter">
-                  Match Time<span className="text-primary">.</span>
+                  <span className="text-primary">Match</span> Time
                 </h2>
               </div>
 
               <div className="space-y-4">
                 <Card className="bg-muted-foreground/10 shadow-sm border-none">
                   <CardContent className="p-4 pt-4">
-                    <span className="text-primary font-bold text-[10px] uppercase tracking-widest">
+                    <span className="text-primary font-bold text-[12px] uppercase tracking-widest">
                       Generali
                     </span>
-                    <p className="italic text-sm mt-1">
+                    <p className="italic text-sm mt-4">
                       <span className="font-semibold">Squadra:</span> {team}
                     </p>
-                    <p className="italic text-sm">
+                    <p className="italic text-sm mt-3">
                       <span className="font-semibold">Categoria:</span>{" "}
                       {category}
                     </p>
@@ -109,7 +118,7 @@ export const SettingsCard = ({
                             htmlFor="push-notifications"
                             className="text-base font-semibold"
                           >
-                            Notifiche push (Presto disponibile)
+                            Notifiche push
                           </Label>
                           <p className="text-xs text-muted-foreground">
                             Avvisi su partite e variazioni orari.
@@ -118,18 +127,13 @@ export const SettingsCard = ({
                         <Switch
                           id="push-notifications"
                           checked={false}
-                          disabled={true}
                           onCheckedChange={async (enabled) => {
                             if (enabled) {
                               const result =
                                 await Notification.requestPermission();
 
-                              if (result !== "granted") {
-                                alert(
-                                  "Permesso per notifiche push negato. Non potrai ricevere notifiche.",
-                                );
-                                return;
-                              }
+                              if (result !== "granted") return;
+
                               try {
                                 const registration =
                                   await navigator.serviceWorker.ready;
@@ -152,13 +156,10 @@ export const SettingsCard = ({
                                     },
                                   },
                                 });
-
-                                console.log(
-                                  "Sottoscrizione inviata con successo!",
-                                );
+ 
                               } catch (error) {
                                 console.error(
-                                  "L'utente ha negato il permesso o errore:",
+                                  "[ERROR] Errore durante la sottoscrizione alle notifiche push:",
                                   error,
                                 );
                               }

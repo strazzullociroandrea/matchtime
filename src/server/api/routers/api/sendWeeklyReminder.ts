@@ -55,7 +55,7 @@ export const sendWeeklyReminder = async ({
       const matchDate = parseMatchDate(match.date);
       if (!matchDate) return false;
 
-      return daysUntil(matchDate) >= 0;
+      return daysUntil(matchDate) <= 7 && daysUntil(matchDate) >= 0;
     });
 
     if (filtered.length === 0) {
@@ -72,7 +72,7 @@ export const sendWeeklyReminder = async ({
         ? `${firstMatch.home} vs ${firstMatch.guest} alle ${firstMatch.hour}. Apri Match Time per i dettagli.`
         : `Hai ${filtered.length} partite tra 7 giorni. Apri Match Time per i dettagli.`;
 
-    await sendPushNotification(
+    sendPushNotification(
       JSON.stringify({
         title: "Promemoria partita tra 7 giorni.",
         body,

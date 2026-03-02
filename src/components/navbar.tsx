@@ -18,7 +18,7 @@ export const Navbar = ({
   category: string;
   team: string;
 }) => {
-  const [show, setShow] = useState(false); 
+  const [show, setShow] = useState(false);
 
   return (
     <>
@@ -56,7 +56,7 @@ export const Navbar = ({
 
         <div className="flex gap-3 mb-1 ml-7">
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-5xl">
-            <span className="text-primary">Calendario</span> Partite
+            <span className="text-primary">Match</span> Time
           </h1>
         </div>
 
