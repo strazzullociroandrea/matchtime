@@ -6,13 +6,13 @@ import { ListMatch } from "@/components/list-match";
 
 export default function Home() {
   const { data, isLoading } = api.orario.getInfo.useQuery();
+  //        <!--<div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full shadow-md"></div>-->
 
   if (isLoading || !data || !data.team || !data.category) {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
-        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full shadow-md"></div>
         <p className="text-muted-foreground animate-pulse font-medium">
-          Caricamento calendario...
+          Il sito è in fase di manutenzione!
         </p>
       </div>
     );
