@@ -27,14 +27,6 @@ export const orarioRouter = createTRPCRouter({
           "Match data fetched successfully.",
         );
 
-        asyncJob(
-          "Sending weekly reminder...",
-          async () => {
-            sendWeeklyReminder({ matches: data.matches });
-          },
-          "Weekly reminder sent successfully.",
-        );
-
         return data;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
