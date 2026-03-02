@@ -20,6 +20,24 @@ const handler = async (req: NextRequest) => {
 
       const year = yearRaw! < 100 ? yearRaw! + 2000 : yearRaw!;
 
+      const alarms = [];
+
+      alarms.push({
+        action: "audio" as const,
+        description: "Reminder",
+        trigger: { weeks: 1, before: true },
+        attachType: "VALUE=URI",
+        attach: "Glass",
+      });
+
+      alarms.push({
+        action: "audio" as const,
+        description: "Reminder",
+        trigger: { days: 3, before: true },
+        attachType: "VALUE=URI",
+        attach: "Glass",
+      });
+
       return {
         uid: `${match.home}-${match.guest}-${match.date}`
           .replace(/\s+/g, "")
@@ -34,18 +52,7 @@ const handler = async (req: NextRequest) => {
         categories: ["Partita di Pallavolo"],
         status: "CONFIRMED",
         busyStatus: "BUSY",
-        alarms: [
-          {
-            action: "display",
-            description: `Promemoria: ${match.home} VS ${match.guest} tra 7 giorni`,
-            trigger: { weeks: 1, before: true }, 
-          },
-          {
-            action: "display",
-            description: `Promemoria: ${match.home} VS ${match.guest} tra 3 giorni`,
-            trigger: { days: 3, before: true },
-          },
-        ],
+        alarms: alarms,
       };
     });
 
