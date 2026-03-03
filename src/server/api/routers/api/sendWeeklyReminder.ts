@@ -1,6 +1,34 @@
 import { TRPCError } from "@trpc/server";
 import { sendPushNotification } from "@/lib/web-push";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
+import { Agenda } from "agenda";
+import { PostgresBackend } from "@agendajs/postgres-backend";
+import { env } from "@/env";
+let agenda: Agenda | null = null;
+
+/**
+ * Function to configure and return an instance of agenda.
+ *
+ * @param dbUrl The database URL for connecting to the PostgreSQL database used by Agenda.
+ * @returns An instance of Agenda configured with the PostgreSQL backend.
+ * @throws An error if the connection to PostgreSQL fails.
+ */
+const getAgenda = ({ dbUrl }: { dbUrl: string }) => {
+  try {
+    return new Agenda({
+      backend: new PostgresBackend({
+        connectionString: dbUrl,
+      }),
+      processEvery: "1 minute",
+    });
+  } catch (error) {
+    console.error(
+      "[ERROR] Failed to connect to PostgreSQL for Agenda: ",
+      error,
+    );
+    throw new Error("Failed to connect to PostgreSQL for Agenda");
+  }
+};
 
 /**
  * Function to parse match date from "DD/MM/YYYY" format and return a Date object.
@@ -72,17 +100,61 @@ export const sendWeeklyReminder = async ({
         ? `${firstMatch.home} vs ${firstMatch.guest} alle ${firstMatch.hour}. Apri Match Time per i dettagli.`
         : `Hai ${filtered.length} partite tra 7 giorni. Apri Match Time per i dettagli.`;
 
-    sendPushNotification(
-      JSON.stringify({
-        title: "Promemoria partita tra 7 giorni.",
-        body,
-        url: "/",
-      }),
-    );
+    if (!agenda) {
+      agenda = getAgenda({ dbUrl: env.POSTGRES_URL });
+      await agenda.start();
+    }
+
+    agenda.define("check-weekly-matches", async (job) => {
+      const { title, body } = job.attrs.data as { title: string; body: string };
+      console.log(
+        "[LOG] Sending weekly reminder notification with title: ",
+        title,
+      );
+
+      await sendPushNotification(
+        JSON.stringify({
+          title,
+          body,
+          url: "/",
+        }),
+      );
+    });
+
+    for (const match of filtered) {
+      const matchDate = parseMatchDate(match.date);
+      if (!matchDate) {
+        console.error(
+          "[ERROR] Invalid match date format for match: ",
+          match.home,
+          " vs ",
+          match.guest,
+          " date: ",
+          match.date,
+        );
+        continue;
+      }
+
+      const notificationDate = new Date(matchDate);
+      notificationDate.setDate(notificationDate.getDate() - 7);
+
+      await agenda.schedule(notificationDate, "check-weekly-matches", {
+        title: "Partita in arrivo!",
+        body: body,
+      });
+
+      console.log(
+        "[LOG] Scheduled weekly reminder for match: ",
+        match.home,
+        " vs ",
+        match.guest,
+        " on ",
+        notificationDate,
+      );
+    }
 
     return {
       sent: true,
-      reason: undefined,
       count: filtered.length,
     };
   } catch (error) {

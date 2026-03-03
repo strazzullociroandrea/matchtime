@@ -11,6 +11,7 @@ const envSchema = z.object({
   PRIVATE_VAPID_KEY: z.string(),
   EMAIL_ADMIN: z.email(),
   URL_DB: z.string(),
+  POSTGRES_URL: z.string(),
 });
 
 export const env = process.env.SKIP_ENV_VALIDATION
