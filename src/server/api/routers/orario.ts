@@ -4,7 +4,7 @@ import { z } from "zod";
 import { MatchSchema } from "@/lib/schemas/match-schema";
 import asyncJob from "@/server/api/routers/api/asyncJob";
 import fetchAndCache from "@/server/api/routers/api/getInfo/fetchAndCache";
-import { sendWeeklyReminder } from "@/server/api/routers/api/sendWeeklyReminder";
+
 
 export const orarioRouter = createTRPCRouter({
   getInfo: publicProcedure

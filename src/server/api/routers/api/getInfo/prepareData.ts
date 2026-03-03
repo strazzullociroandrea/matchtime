@@ -75,6 +75,11 @@ const formattedPlace = (place: string): string => {
     .join(", ");
 };
 
+/**
+ * Function to format the team name by splitting it on spaces, trimming whitespace, and capitalizing the first letter of each word. If the input string is empty or null, it returns "NA".
+ * @param team
+ * @returns
+ */
 const formattedTeam = (team: string): string => {
   if (!team || team === "NA") return "NA";
 
