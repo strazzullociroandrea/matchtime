@@ -128,7 +128,7 @@ export const sendWeeklyReminder = async ({
       for (let i = 7; i >= 1; i--) {
         const notificationDate = new Date(matchDate);
         notificationDate.setDate(notificationDate.getDate() - i);
-        notificationDate.setHours(hours, minutes || 18, 30, 0);
+        notificationDate.setHours(hours, minutes || 19, 15, 0);
 
         const uniqueKey = `reminder-${i}days-${match.home}-${match.guest}-${match.date}`;
 
