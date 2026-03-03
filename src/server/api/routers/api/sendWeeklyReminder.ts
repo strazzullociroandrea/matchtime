@@ -126,6 +126,8 @@ export const sendWeeklyReminder = async ({
       const [hours, minutes] = match.hour.split(":").map(Number);
 
       for (let i = 7; i >= 1; i--) {
+        const today = new Date();
+        if(daysUntil(matchDate) > i) continue;
         const notificationDate = new Date(matchDate);
         notificationDate.setDate(notificationDate.getDate() - i);
         notificationDate.setHours(hours, minutes || 19, 15, 0);
