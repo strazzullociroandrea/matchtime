@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { subscriptions } from "@/lib/schemas/db-schema";
-import { eq, is } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 export const NotificationRouter = createTRPCRouter({
   manageSubscribtion: publicProcedure
     .input(

@@ -8,6 +8,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PartitaVolley } from "@/lib/schemas/match-schema";
 import { SettingsCard } from "@/components/settings-card";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Navbar = ({
   matches,
@@ -30,6 +31,11 @@ export const Navbar = ({
             }
             fileName={`calendario_${category}_${team}.pdf`}
             className="mr-2 inline-block"
+            onClick={() => {
+              toast.success("Generazione PDF in corso...", {
+                description: "Il download del calendario inizierà a breve.",
+              });
+            }}
           >
             <span className="  bg-background inline-flex text-muted-foreground items-center justify-center rounded-full border border-input  hover:border-primary hover:text-primary h-10 w-10 text-sm font-medium">
               <Download className="h-4 w-4" />
