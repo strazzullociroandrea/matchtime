@@ -77,6 +77,7 @@ const handler = async (req: NextRequest) => {
       },
     });
   } catch (error) {
+    console.error("Errore nel handler del calendario:", error);
     return new Response("Errore server", { status: 500 });
   }
 };
