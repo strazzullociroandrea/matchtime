@@ -141,7 +141,7 @@ export const sendWeeklyReminder = async ({
       await agenda
         .create("check-weekly-matches", {
           title: "Partita in arrivo!",
-          body: `${match.home} vs ${match.guest} tra una settimana alle ${match.hour}.`,
+          body: body,
           uniqueId: uniqueKey,
         })
         .unique({ "data.uniqueId": uniqueKey })
