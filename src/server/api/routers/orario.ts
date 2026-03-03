@@ -4,7 +4,7 @@ import { z } from "zod";
 import { MatchSchema } from "@/lib/schemas/match-schema";
 import asyncJob from "@/server/api/routers/api/asyncJob";
 import fetchAndCache from "@/server/api/routers/api/getInfo/fetchAndCache";
-
+import { env } from "@/env";
 
 export const orarioRouter = createTRPCRouter({
   getInfo: publicProcedure
@@ -14,7 +14,7 @@ export const orarioRouter = createTRPCRouter({
         matches: z.array(MatchSchema),
         lastUpdate: z.string(),
         team: z.string(),
-        category: z.string(),
+        category: z.string().nullable(),
       }),
     )
     .query(async () => {
@@ -22,7 +22,7 @@ export const orarioRouter = createTRPCRouter({
         const data = await asyncJob(
           "Fetching match data...",
           async () => {
-            return await fetchAndCache();
+            return await fetchAndCache(env.CATEGORY);
           },
           "Match data fetched successfully.",
         );
