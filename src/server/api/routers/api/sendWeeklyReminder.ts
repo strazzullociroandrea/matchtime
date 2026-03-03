@@ -134,14 +134,19 @@ export const sendWeeklyReminder = async ({
         );
         continue;
       }
-
+      const uniqueKey = `reminder-${match.home}-${match.guest}-${match.date}`;
       const notificationDate = new Date(matchDate);
       notificationDate.setDate(notificationDate.getDate() - 7);
 
-      await agenda.schedule(notificationDate, "check-weekly-matches", {
-        title: "Partita in arrivo!",
-        body: body,
-      });
+      await agenda
+        .create("check-weekly-matches", {
+          title: "Partita in arrivo!",
+          body: `${match.home} vs ${match.guest} tra una settimana alle ${match.hour}.`,
+          uniqueId: uniqueKey,
+        })
+        .unique({ "data.uniqueId": uniqueKey })
+        .schedule(notificationDate)
+        .save();
 
       console.log(
         "[LOG] Scheduled weekly reminder for match: ",
