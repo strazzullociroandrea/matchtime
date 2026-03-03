@@ -119,18 +119,27 @@ export const sendWeeklyReminder = async ({
       "[LOG] Scheduling weekly reminders for matches: ",
       filtered.length,
     );
+
+    await agenda.cancel({ name: "check-weekly-matches" });
+
     for (const match of filtered) {
       const matchDate = parseMatchDate(match.date);
       if (!matchDate) continue;
 
       const [hours, minutes] = match.hour.split(":").map(Number);
+      const today = new Date();
 
       for (let i = 7; i >= 1; i--) {
-        const today = new Date();
-        if(today > matchDate) continue;
         const notificationDate = new Date(matchDate);
         notificationDate.setDate(notificationDate.getDate() - i);
-        notificationDate.setHours(hours, minutes || 19, 15, 0);
+        notificationDate.setHours(hours ?? 19, minutes ?? 0, 15, 0);
+
+        if (notificationDate <= today) {
+          console.log(
+            `[LOG] Skipping past notification for ${match.home} VS ${match.guest} (${i} days before) - date: ${notificationDate.toISOString()}`,
+          );
+          continue;
+        }
 
         const uniqueKey = `reminder-${i}days-${match.home}-${match.guest}-${match.date}`;
 
