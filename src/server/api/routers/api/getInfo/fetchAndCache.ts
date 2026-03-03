@@ -46,6 +46,7 @@ const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
     return 0;
   });
 };
+let categ: string = "";
 /**
  * Function to fetch and cache volleyball match data. It checks if a data retrieval process is already in progress, and if not,
  * it prepares the data by calling the prepareData function, which retrieves and processes the match data, send notification and then return results.
@@ -56,7 +57,7 @@ const orderByStatus = (matches: PartitaVolley[]): PartitaVolley[] => {
  * @throws TRPCError if there is an error during the data retrieval process or if a retrieval process is already in progress.
  */
 const fetchAndCacheMatches = unstable_cache(
-  async () => {
+  async (category: string | null) => {
     fs.mkdirSync(env.DOWNLOAD_PATH, { recursive: true });
 
     if (isWorking) {
@@ -65,7 +66,7 @@ const fetchAndCacheMatches = unstable_cache(
         message: "Recupero dati in corso. Riprova tra poco.",
       });
     }
-
+    categ = category ?? env.CATEGORY;
     try {
       isWorking = true;
       const content = await asyncJob(
@@ -73,7 +74,7 @@ const fetchAndCacheMatches = unstable_cache(
         async () => {
           return await prepareData({
             downloadPath: env.DOWNLOAD_PATH,
-            category: env.CATEGORY,
+            category: categ,
             team: env.TEAM,
             homePlace: env.HOME_PLACE,
             urlDownloadSite: env.URL_DOWNLOAD_SITE,
@@ -84,19 +85,22 @@ const fetchAndCacheMatches = unstable_cache(
 
       const matches = orderByStatus(content);
 
-      asyncJob(
-        "Sending weekly reminder...",
-        async () => {
-          sendWeeklyReminder({ matches: matches });
-        },
-        "Weekly reminder sent successfully.",
-      );
+      // Send weekly reminder only if category is not specified (is only for who use the client website)
+      if (!category || category.trim() === "") {
+        asyncJob(
+          "Sending weekly reminder...",
+          async () => {
+            sendWeeklyReminder({ matches: matches });
+          },
+          "Weekly reminder sent successfully.",
+        );
+      }
 
       return {
         matches: matches,
         lastUpdate: new Date().toISOString(),
         team: env.TEAM,
-        category: env.CATEGORY,
+        category: env.CATEGORY || category,
       };
     } catch (error) {
       throw new TRPCError({
@@ -108,7 +112,7 @@ const fetchAndCacheMatches = unstable_cache(
       isWorking = false;
     }
   },
-  ["volleyball-matches-data"],
+  ["volleyball-matches-data-" + categ],
   { revalidate: 43200, tags: ["matches"] },
 );
 

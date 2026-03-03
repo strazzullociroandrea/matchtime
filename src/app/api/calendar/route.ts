@@ -1,10 +1,14 @@
 import type { NextRequest } from "next/server";
 import * as ics from "ics";
 import fetchAndCacheMatches from "@/server/api/routers/api/getInfo/fetchAndCache";
+import { env } from "@/env";
 
 const handler = async (req: NextRequest) => {
   try {
-    const { matches } = await fetchAndCacheMatches();
+    const url = new URL(req.url);
+    const category = url.searchParams.get("category")?.replaceAll("_", " ");
+
+    const { matches } = await fetchAndCacheMatches(category ?? env.CATEGORY);
 
     const validMatches = matches.filter((match) => {
       if (match.status === "Conclusa" || !match.date || !match.hour)
@@ -23,19 +27,15 @@ const handler = async (req: NextRequest) => {
       const alarms = [];
 
       alarms.push({
-        action: "audio" as const,
-        description: "Reminder",
-        trigger: { weeks: 1, before: true },
-        attachType: "VALUE=URI",
-        attach: "Glass",
+        action: "display" as const,
+        description: "Hai una partita tra una settimana!",
+        trigger: { hours: 168, before: true },
       });
 
       alarms.push({
-        action: "audio" as const,
-        description: "Reminder",
-        trigger: { days: 3, before: true },
-        attachType: "VALUE=URI",
-        attach: "Glass",
+        action: "display" as const,
+        description: "Hai una partita tra tre giorni!",
+        trigger: { hours: 72, before: true },
       });
 
       return {
@@ -46,7 +46,7 @@ const handler = async (req: NextRequest) => {
         startOutputType: "local",
         start: [year!, month!, day!, hour!, minute!],
         duration: { hours: 2, minutes: 0 },
-        title: `PARTITA: ${match.home} VS ${match.guest}`,
+        title: `PARTITA: ${match.home} VS ${match.guest} - ${category ?? env.CATEGORY}`,
         description: `${match.home} VS ${match.guest}.`,
         location: match.place || "Sede da definire",
         categories: ["Partita di Pallavolo"],
