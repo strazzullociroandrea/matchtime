@@ -10,7 +10,6 @@ const envSchema = z.object({
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string(),
   PRIVATE_VAPID_KEY: z.string(),
   EMAIL_ADMIN: z.email(),
-  URL_DB: z.string(),
   POSTGRES_URL: z.string(),
 });
 

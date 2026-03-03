@@ -1,18 +1,14 @@
-import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { subscriptions } from "@/lib/schemas/db-schema";
 import { env } from "@/env";
-import { drizzle } from "drizzle-orm/mysql2";
 
-const cleanUrl = env.URL_DB.replace(/^["'](.+)["']$/, "$1");
+const cleanUrl = env.POSTGRES_URL;
 
-const connection = mysql.createPool({
-  uri: cleanUrl,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+const queryClient = postgres(cleanUrl, {
+  max: 10,
 });
 
-export const db = drizzle(connection, {
+export const db = drizzle(queryClient, {
   schema: { subscriptions },
-  mode: "default",
 });

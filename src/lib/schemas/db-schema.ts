@@ -1,8 +1,8 @@
-import { mysqlTable, serial, varchar, text } from "drizzle-orm/mysql-core";
+import { pgTable, serial, text } from "drizzle-orm/pg-core";
 
-export const subscriptions = mysqlTable("subscription", {
+export const subscriptions = pgTable("subscription", {
   id: serial("id").primaryKey(),
-  endpoint: varchar("endpoint", { length: 255 }).notNull().unique(),
+  endpoint: text("endpoint").notNull().unique(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
 });
