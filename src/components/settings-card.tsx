@@ -51,6 +51,7 @@ export const SettingsCard = ({
       });
     },
     onError: (err) => {
+      console.error("Error during subscription:", err);
       toast.error("Errore durante l'iscrizione", {
         description:
           "Non è stato possibile attivare le notifiche push. Riprova più tardi.",
@@ -71,6 +72,7 @@ export const SettingsCard = ({
       });
     },
     onError: (err) => {
+      console.error("Error during unsubscription:", err);
       toast.error("Errore durante la disattivazione", {
         description:
           "Non è stato possibile disattivare le notifiche push. Riprova più tardi.",
@@ -159,6 +161,10 @@ export const SettingsCard = ({
                                   description: `Tema ${t ? "scuro" : "chiaro"} attivato!`,
                                 });
                               } catch (error) {
+                                console.error(
+                                  "Error during theme change:",
+                                  error,
+                                );
                                 toast.error("Errore durante il cambio tema", {
                                   description:
                                     "Non è stato possibile aggiornare il tema. Riprova più tardi.",
@@ -218,6 +224,10 @@ export const SettingsCard = ({
                                     });
                                     setCurrentEndpoint(sub.endpoint);
                                   } catch (error) {
+                                    console.error(
+                                      "Error during subscription:",
+                                      error,
+                                    );
                                     toast.error("Errore", {
                                       description:
                                         "Non è stato possibile attivare le notifiche push. Riprova più tardi.",
@@ -243,6 +253,10 @@ export const SettingsCard = ({
                                     });
                                     await sub.unsubscribe();
                                   } catch (error) {
+                                    console.error(
+                                      "Error during unsubscription:",
+                                      error,
+                                    );
                                     toast.error("Errore", {
                                       description:
                                         "Non è stato possibile disattivare le notifiche push. Riprova più tardi.",
