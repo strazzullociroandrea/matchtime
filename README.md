@@ -18,7 +18,9 @@ Le principali funzionalità del sistema includono:
   dal file excel, accessibile pubblicamente, presente sul sito ufficiale PGS (https://www.volley.pgsmilano.org).
 - Link rapido al navigatore, impostato sul dispositivo, per raggiungere facilmente la sede della partita
 - Interfaccia responsive e user-friendly, accessibile da qualsiasi dispositivo, inclusi smartphone, tablet e desktop.
-
+- Gestione tema di visualizzazione (light/dark version)
+- Ricezione delle notifiche push, se abilitate, 7 e 3 giorni prima del match
+- Sincronizzazione dei dati con i principali provider di calendario.
 ---
 
 ## Stack tecnologico
