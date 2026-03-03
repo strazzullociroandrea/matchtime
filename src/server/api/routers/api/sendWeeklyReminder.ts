@@ -94,12 +94,6 @@ export const sendWeeklyReminder = async ({
       };
     }
 
-    const firstMatch = filtered[0];
-    const body =
-      filtered.length === 1
-        ? `${firstMatch.home} vs ${firstMatch.guest} alle ${firstMatch.hour}. Apri Match Time per i dettagli.`
-        : `Hai ${filtered.length} partite tra 7 giorni. Apri Match Time per i dettagli.`;
-
     if (!agenda) {
       agenda = getAgenda({ dbUrl: env.POSTGRES_URL });
       await agenda.start();
@@ -121,41 +115,37 @@ export const sendWeeklyReminder = async ({
       );
     });
 
+    console.log(
+      "[LOG] Scheduling weekly reminders for matches: ",
+      filtered.length,
+    );
     for (const match of filtered) {
       const matchDate = parseMatchDate(match.date);
-      if (!matchDate) {
-        console.error(
-          "[ERROR] Invalid match date format for match: ",
-          match.home,
-          " vs ",
-          match.guest,
-          " date: ",
-          match.date,
+      if (!matchDate) continue;
+
+      const [hours, minutes] = match.hour.split(":").map(Number);
+
+      for (let i = 7; i >= 1; i--) {
+        const notificationDate = new Date(matchDate);
+        notificationDate.setDate(notificationDate.getDate() - i);
+        notificationDate.setHours(hours, minutes || 18, 30, 0);
+
+        const uniqueKey = `reminder-${i}days-${match.home}-${match.guest}-${match.date}`;
+
+        await agenda
+          .create("check-weekly-matches", {
+            title: `Mancano ${i} giorni alla partita!`,
+            body: `${match.home} VS ${match.guest} si gioca tra ${i} giorni alle ${match.hour}. Visualizza i dettagli della partita!`,
+            uniqueId: uniqueKey,
+          })
+          .unique({ "data.uniqueId": uniqueKey })
+          .schedule(notificationDate)
+          .save();
+
+        console.log(
+          `[LOG] Scheduled reminder for match ${match.home} VS ${match.guest} on ${notificationDate.toISOString()}`,
         );
-        continue;
       }
-      const uniqueKey = `reminder-${match.home}-${match.guest}-${match.date}`;
-      const notificationDate = new Date(matchDate);
-      notificationDate.setDate(notificationDate.getDate() - 7);
-
-      await agenda
-        .create("check-weekly-matches", {
-          title: "Partita in arrivo!",
-          body: body,
-          uniqueId: uniqueKey,
-        })
-        .unique({ "data.uniqueId": uniqueKey })
-        .schedule(notificationDate)
-        .save();
-
-      console.log(
-        "[LOG] Scheduled weekly reminder for match: ",
-        match.home,
-        " vs ",
-        match.guest,
-        " on ",
-        notificationDate,
-      );
     }
 
     return {

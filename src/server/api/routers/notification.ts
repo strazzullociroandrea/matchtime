@@ -34,7 +34,8 @@ export const NotificationRouter = createTRPCRouter({
               p256dh: keys.p256dh,
               auth: keys.auth,
             })
-            .onDuplicateKeyUpdate({
+            .onConflictDoUpdate({
+              target: subscriptions.endpoint, 
               set: {
                 p256dh: keys.p256dh,
                 auth: keys.auth,
