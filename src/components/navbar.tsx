@@ -19,8 +19,6 @@ export const Navbar = ({
   category: string;
   team: string;
 }) => {
-  const [show, setShow] = useState(false);
-
   return (
     <>
       <nav className="relative light:border-b  border-slate-200 dark:border-slate-800 w-full max-w-auto mx-auto py-6">
@@ -41,14 +39,6 @@ export const Navbar = ({
               <Download className="h-4 w-4" />
             </span>
           </PDFDownloadLink>
-          <Button
-            variant="settings"
-            size="icon"
-            className=" w-10 h-10 rounded-full text-muted-foreground "
-            onClick={() => setShow(true)}
-          >
-            <Settings className="w-5 h-5" />
-          </Button>
         </div>
 
         <div className="mb-3 ml-6">
@@ -71,13 +61,6 @@ export const Navbar = ({
             Visualizza il calendario completo delle partite della tua squadra.
           </p>
         </div>
-
-        <SettingsCard
-          show={show}
-          setShow={setShow}
-          category={category}
-          team={team}
-        />
       </nav>
     </>
   );
