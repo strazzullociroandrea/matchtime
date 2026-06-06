@@ -12,6 +12,10 @@ export const Navbar = () => {
 
                 <a href="/" className="flex items-center">
                     <img src="/logo.png" alt="logo" className="h-10 w-auto"/>
+                    <div className="ml-3">
+                        <p>Match Time</p>
+                        <p className="text-xs text-muted-foreground">Under 15 Maschile</p>
+                    </div>
                 </a>
 
                 <div className="flex items-center gap-5">
@@ -41,13 +45,14 @@ export const Navbar = () => {
                             <TextAlignJustify/> Elenco
                         </Button>
                     </div>
-                    <div className="hidden lg:flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <div
+                        className="hidden lg:flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                         <Button
                             variant="ghost"
                             size="icon"
                             className="cursor-pointer rounded-full h-8 w-8 transition-all duration-300 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
                         >
-                            <Settings className="h-4 w-4" />
+                            <Settings className="h-4 w-4"/>
                         </Button>
                     </div>
                 </div>
