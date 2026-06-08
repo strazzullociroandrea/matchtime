@@ -28,10 +28,11 @@ const response = await fetch(apiUrl, {
     })
 })
 
-const {matches} = await response.json();
+const {matches, lastUpdate} = await response.json();
+Astro.cookies.set("lastUpdate", lastUpdate, { path: '/' });
 ---
 
 <Layout>
     <PageManager client:load matches={matches} team={team}
-                 category={category}/>
+                 category={category}  />
 </Layout>

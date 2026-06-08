@@ -1,0 +1,9 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import {Settings} from "@/components/settings.tsx"
+const lastUpdate = Astro.cookies.get("lastUpdate")?.value;
+---
+
+<Layout>
+    <Settings lastUpdate={lastUpdate}/>
+</Layout>

@@ -1,12 +1,13 @@
 import {Button} from '@/components/ui/button';
 import {Calendar, TextAlignJustify, Settings} from "lucide-react"
 
-export const Navbar = ({type, onTypeChange, team, category}: {
+export const Navbar = ({type, onTypeChange, team, category }: {
     type: "calendario" | "elenco",
     onTypeChange: (nuovoType: "calendario" | "elenco") => void,
     team: string,
-    category: string
+    category: string,
 }) => {
+
 
     return (
         <>
@@ -57,6 +58,7 @@ export const Navbar = ({type, onTypeChange, team, category}: {
                             className="hidden lg:flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                             <Button
                                 variant="ghost"
+                                onClick={() => window.location.href = "/settings"}
                                 size="icon"
                                 className="cursor-pointer rounded-full h-8 w-8 transition-all duration-300 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
                             >
@@ -90,6 +92,7 @@ export const Navbar = ({type, onTypeChange, team, category}: {
                 </Button>
                 <Button
                     variant="ghost"
+                    onClick={() => window.location.href = "/settings"}
                     className={`cursor-pointer flex flex-col h-auto ${type === "elenco" ? "text-blue-600" : "text-zinc-500"}`}
                 >
                     <Settings className="h-5 w-5"/>
