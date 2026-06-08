@@ -1,8 +1,36 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import {Navbar} from '@/components/navbar.tsx';
+import {PageManager} from "@/components/page-manager.tsx"
+const apiUrl = import.meta.env.PUBLIC_URL_API;
+const category = import.meta.env.PUBLIC_CATEGORY;
+const team = import.meta.env.PUBLIC_TEAM;
+
+if (!apiUrl) {
+    console.error("[ERROR-ENV] API URL MISSING")
+}
+if (!category) {
+    console.error("[ERROR-ENV] CATEGORY MISSING")
+}
+
+if (!team) {
+    console.error("[ERROR-ENV] TEAM MISSING")
+}
+
+
+const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+        "content-type": "application/json"
+    },
+    body: JSON.stringify({
+        category: category,
+        team: team
+    })
+})
+
+const {matches} = await response.json();
 ---
 
 <Layout>
-    <Navbar client:load/>
+    <PageManager client:load matches={matches}/>
 </Layout>

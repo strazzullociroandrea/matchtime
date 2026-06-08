@@ -1,9 +1,10 @@
-import {useState} from 'react';
 import {Button} from '@/components/ui/button';
 import {Calendar, TextAlignJustify, Settings} from "lucide-react"
 
-export const Navbar = () => {
-    const [active, setActive] = useState<"calendario" | "elenco">("calendario");
+export const Navbar = ({type, onTypeChange}: {
+    type: "calendario" | "elenco",
+    onTypeChange: (nuovoType: "calendario" | "elenco") => void
+}) => {
 
     return (
         <nav
@@ -23,9 +24,11 @@ export const Navbar = () => {
                         className="hidden lg:flex items-center bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
                         <Button
                             variant="ghost"
-                            onClick={() => setActive("calendario")}
+                            onClick={() => {
+                                onTypeChange("calendario")
+                            }}
                             className={`cursor-pointer px-6 rounded-full transition-all duration-300 font-medium text-sm ${
-                                active === "calendario"
+                                type === "calendario"
                                     ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
                                     : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
                             }`}
@@ -35,9 +38,11 @@ export const Navbar = () => {
 
                         <Button
                             variant="ghost"
-                            onClick={() => setActive("elenco")}
+                            onClick={() => {
+                                onTypeChange("elenco")
+                            }}
                             className={`cursor-pointer px-6 rounded-full transition-all duration-300 font-medium text-sm ${
-                                active === "elenco"
+                                type === "elenco"
                                     ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
                                     : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
                             }`}
