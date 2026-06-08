@@ -1,7 +1,7 @@
 import {Button} from '@/components/ui/button';
 import {Calendar, TextAlignJustify, Settings} from "lucide-react"
 
-export const Navbar = ({type, onTypeChange, team, category }: {
+export const Navbar = ({type, onTypeChange, team, category}: {
     type: "calendario" | "elenco",
     onTypeChange: (nuovoType: "calendario" | "elenco") => void,
     team: string,
@@ -16,7 +16,7 @@ export const Navbar = ({type, onTypeChange, team, category }: {
                 <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
 
                     <a href="/" className="flex items-center">
-                        <img src="/logo.png" alt="logo" className="h-10 w-auto"/>
+                        <img src="/logo.png" alt="logo" className="h-10 w-10"/>
                         <div className="ml-3">
                             <p>Match Time</p>
                             <p className="text-xs text-muted-foreground">{team + " > " + category}</p>
