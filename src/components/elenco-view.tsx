@@ -11,6 +11,8 @@ import {parse} from "date-fns";
 import {Badge} from "@/components/ui/badge"
 import {AlertCircle, ChevronRight, Clock, MapPin} from "lucide-react";
 import {Separator} from "@/components/ui/separator"
+import {getNavigationLink} from "@/components/get-navigation-link";
+
 
 interface Match {
     id_partita: string,
@@ -30,16 +32,6 @@ interface CalendarProps {
 
 export const ElencoView = ({matches}: CalendarProps) => {
 
-    const getNavigationLink = (indirizzo: string) => {
-        const query = encodeURIComponent(indirizzo);
-        if (typeof window !== "undefined") {
-            const ua = navigator.userAgent;
-            if (/iPhone|iPad|iPod|Macintosh/i.test(ua))
-                return `maps://maps.apple.com/?q=${query}`;
-            if (/Android/i.test(ua)) return `geo:0,0?q=${query}`;
-        }
-        return `https://www.google.com/maps/search/?api=1&query=${query}`;
-    }
 
     return (
         <div className="grid gap-4 p-6">
@@ -80,7 +72,7 @@ export const ElencoView = ({matches}: CalendarProps) => {
                                         {match.ora ?? "--:--"}
                                     </span>
                                         <span
-                                            className="text-[10px] text-red-700 uppercase font-bold tracking-widest text-muted-foreground mt-1">
+                                            className="text-[10px] text-red-700 uppercase font-bold tracking-widest mt-1">
                                         {match.data ?? "Non disponibile"}
                                     </span>
                                     </div>
