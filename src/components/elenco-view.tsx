@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/empty";
 import {parse} from "date-fns";
 import {Badge} from "@/components/ui/badge"
-import {ChevronRight, MapPin} from "lucide-react";
+import {AlertCircle, ChevronRight, Clock, MapPin} from "lucide-react";
 import {Separator} from "@/components/ui/separator"
 
 interface Match {
@@ -56,9 +56,10 @@ export const ElencoView = ({matches}: CalendarProps) => {
                 </Empty>
             ) : (
                 <div>
-                    <p className="text-lg text-muted-foreground italic mb-4 ">
-                        Calendario partite
-                    </p>
+                    <div className="flex items-center gap-2 mb-6">
+                        <Clock className="text-blue-700 w-5 h-5"/>
+                        <h2 className="text-xl italic tracking-tight text-muted-foreground">Calendario partite</h2>
+                    </div>
                     <div className="grid gap-10 mt-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 justify-between ">
                         {matches.filter(m => m.data && m.ora).sort((m1, m2) => {
 
@@ -79,7 +80,7 @@ export const ElencoView = ({matches}: CalendarProps) => {
                                         {match.ora ?? "--:--"}
                                     </span>
                                         <span
-                                            className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mt-1">
+                                            className="text-[10px] text-red-700 uppercase font-bold tracking-widest text-muted-foreground mt-1">
                                         {match.data ?? "Non disponibile"}
                                     </span>
                                     </div>
@@ -145,9 +146,10 @@ export const ElencoView = ({matches}: CalendarProps) => {
             <Separator className="mt-4"/>
 
             <div>
-                <p className="text-lg text-muted-foreground italic mb-4 ">
-                    Partite da definire
-                </p>
+                <div className="flex items-center gap-2 mb-6">
+                    <AlertCircle className="text-amber-500 w-5 h-5"/>
+                    <h2 className="text-xl italic tracking-tight text-muted-foreground">Da definire</h2>
+                </div>
                 <div className="grid gap-10 mt-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 justify-between ">
 
                     {
