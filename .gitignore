@@ -28,3 +28,4 @@ package-lock.json
 .dist
 .wrangler
 .astro
+pnpm-lock.yaml
