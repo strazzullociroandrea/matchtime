@@ -9,9 +9,7 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: cloudflare({
-      mode: 'directory'
-    }),
+  adapter: cloudflare(),
   output: 'server',
   vite: {
     plugins: [tailwindcss()]
