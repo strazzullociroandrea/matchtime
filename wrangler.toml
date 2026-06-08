@@ -1,5 +1,0 @@
-name = "matchtime"
-main = "dist/_worker.js"
-compatibility_date = "2024-12-12"
-
-
