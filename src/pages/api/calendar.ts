@@ -16,9 +16,9 @@ interface Match {
 export const GET: APIRoute = async ({params, locals}) => {
 
     try {
-        const url = import.meta.env.PUBLIC_URL_API || (locals as any).runtime.env.PUBLIC_URL_API;
-        const category = import.meta.env.PUBLIC_CATEGORY || (locals as any).runtime.env.PUBLIC_CATEGORY;
-        const team = import.meta.env.PUBLIC_TEAM || (locals as any).runtime.env.PUBLIC_TEAM;
+        const url = import.meta.env.PUBLIC_URL_API;
+        const category = import.meta.env.PUBLIC_CATEGORY;
+        const team = import.meta.env.PUBLIC_TEAM;
 
         if (!url || !category || !team) {
             console.error("[ERROR-ICS] Missing data env");

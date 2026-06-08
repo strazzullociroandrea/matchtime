@@ -1,6 +1,16 @@
 import {NavbarSettings} from "@/components/navbar-settings.tsx"
 import {Card} from "@/components/ui/card.tsx";
-import {MessageSquareWarning, CloudDownload, Volleyball, Share, Smartphone, Download} from "lucide-react"
+import {
+    MessageSquareWarning,
+    CloudDownload,
+    Volleyball,
+    Share,
+    Smartphone,
+    Download,
+    Calendar,
+    ChevronRight,
+    Copy, Check
+} from "lucide-react"
 import {
     Accordion,
     AccordionContent,
@@ -9,7 +19,15 @@ import {
 } from "@/components/ui/accordion"
 import {useState, useEffect} from "react";
 import {toast} from "sonner"
-
+import {Button} from "@/components/ui/button.tsx";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer.tsx";
 
 export const Settings = ({lastUpdate}: { lastUpdate: string | null }) => {
 
@@ -18,7 +36,8 @@ export const Settings = ({lastUpdate}: { lastUpdate: string | null }) => {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isInstallable, setIsInstallable] = useState(false);
     const [isIOS, setIsIOS] = useState(false);
-
+    const [copied, setCopied] = useState(false);
+    const calendarUrl = import.meta.env.PUBLIC_DOMAIN + "/api/calendar";
 
     useEffect(() => {
         setMounted(true);
@@ -103,6 +122,59 @@ export const Settings = ({lastUpdate}: { lastUpdate: string | null }) => {
                         Sincronizza con il tuo calendario
                     </p>
 
+                    <Drawer>
+                        <DrawerTrigger asChild>
+                            <Card
+                                className="group relative flex flex-row items-center justify-between p-4 transition-all cursor-pointer">
+                                <div className="flex items-center gap-4 overflow-hidden">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center">
+                                        <Calendar className="h-5 w-5"/>
+                                    </div>
+                                    <div className="flex flex-col overflow-hidden text-left">
+                                        <h3 className="truncate font-semibold">Sincronizza calendario</h3>
+                                        <p className="text-xs text-zinc-500">Aggiungi le partite al tuo smartphone.</p>
+                                    </div>
+                                </div>
+                                <ChevronRight
+                                    className="h-5 w-5 text-zinc-400 group-hover:translate-x-1 transition-transform"/>
+                            </Card>
+                        </DrawerTrigger>
+                        <DrawerContent>
+                            <div className="mx-auto w-full max-w-sm p-4">
+                                <DrawerHeader>
+                                    <DrawerTitle>Aggiungi al calendario</DrawerTitle>
+                                    <DrawerDescription>Resta sempre aggiornato sui match.</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="flex flex-col gap-3 py-6">
+                                    <Button variant="default"
+                                            className="cursor-pointer h-14 justify-start gap-4 rounded-2xl"
+                                            onClick={() => window.open(calendarUrl)}>
+                                        <Download className="h-5 w-5"/>
+                                        <div className="flex flex-col items-start leading-tight">
+                                            <span>Scarica file .ics</span>
+                                            <span
+                                                className="text-[10px] opacity-80 font-normal">Importazione manuale.</span>
+                                        </div>
+                                    </Button>
+                                    <Button variant="outline"
+                                            className="cursor-pointer h-14 justify-start gap-4 rounded-2xl mb-5"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(calendarUrl);
+                                                setCopied(true);
+                                                toast.success("Link copiato");
+                                                setTimeout(() => setCopied(false), 3000);
+                                            }}>
+                                        {copied ? <Check className="h-5 w-5 text-green-500"/> :
+                                            <Copy className="h-5 w-5"/>}
+                                        <div className="flex flex-col items-start leading-tight">
+                                            <span>Copia URL iscrizione</span>
+                                            <span className="text-[10px] text-zinc-500 font-normal">Sincronizzazione automatica.</span>
+                                        </div>
+                                    </Button>
+                                </div>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
 
                     <p className="mt-8 text-muted-foreground uppercase text-[10px]">
                         Altro
