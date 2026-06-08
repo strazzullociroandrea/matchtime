@@ -1,9 +1,11 @@
 import {Button} from '@/components/ui/button';
 import {Calendar, TextAlignJustify, Settings} from "lucide-react"
 
-export const Navbar = ({type, onTypeChange}: {
+export const Navbar = ({type, onTypeChange, team, category}: {
     type: "calendario" | "elenco",
-    onTypeChange: (nuovoType: "calendario" | "elenco") => void
+    onTypeChange: (nuovoType: "calendario" | "elenco") => void,
+    team: string,
+    category: string
 }) => {
 
     return (
@@ -15,7 +17,7 @@ export const Navbar = ({type, onTypeChange}: {
                     <img src="/logo.png" alt="logo" className="h-10 w-auto"/>
                     <div className="ml-3">
                         <p>Match Time</p>
-                        <p className="text-xs text-muted-foreground">Under 15 Maschile</p>
+                        <p className="text-xs text-muted-foreground">{team + " > " + category}</p>
                     </div>
                 </a>
 

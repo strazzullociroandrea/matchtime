@@ -15,14 +15,16 @@ interface Match {
 
 interface CalendarProps {
     matches: Match[];
+    team: string;
+    category: string;
 }
 
-export const PageManager = ({matches}: CalendarProps) => {
+export const PageManager = ({matches, team, category}: CalendarProps) => {
     const [view, setView] = useState<"calendario" | "elenco">("calendario");
 
     return (
         <>
-            <Navbar type={view} onTypeChange={setView}/>
+            <Navbar type={view} onTypeChange={setView} team={team} category={category}/>
             <main className="container mx-auto px-4 py-8 pt-20 w-full">
                 {view === "calendario" ? (
                     <CalendarView matches={matches}/>

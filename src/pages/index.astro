@@ -32,5 +32,6 @@ const {matches} = await response.json();
 ---
 
 <Layout>
-    <PageManager client:load matches={matches}/>
+    <PageManager client:load matches={matches} team={team}
+                 category={category}/>
 </Layout>
