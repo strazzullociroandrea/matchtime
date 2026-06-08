@@ -28,7 +28,11 @@ const response = await fetch(apiUrl, {
     })
 })
 
-const {matches} = await response.json();
+let {matches, lastUpdate} = await response.json();
+if (!matches) {
+    matches = [];
+}
+Astro.cookies.set("lastUpdate", lastUpdate, {path: '/'});
 ---
 
 <Layout>

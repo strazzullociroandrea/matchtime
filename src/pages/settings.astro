@@ -1,0 +1,12 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import {Settings} from "@/components/settings.tsx"
+const lastUpdate = Astro.cookies.get("lastUpdate")?.value;
+import { Toaster } from "@/components/ui/sonner"
+
+---
+
+<Layout>
+    <Settings client:load lastUpdate={lastUpdate}/>
+    <Toaster client:load richColors/>
+</Layout>

@@ -17,6 +17,7 @@ interface CalendarProps {
     matches: Match[];
     team: string;
     category: string;
+    lastUpdate: string;
 }
 
 export const PageManager = ({matches, team, category}: CalendarProps) => {
