@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import {pwaInfo} from 'virtual:pwa-info';
 ---
 <!DOCTYPE HTML>
 <html lang="it">
@@ -11,6 +12,10 @@ import '../styles/global.css'
     <meta name="description"
           content="Match Time è un'applicazione indipendente che mostra l'elenco delle partite di pallavolo in tempo reale in modo organizzato."/>
     <title>Match Time</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    {pwaInfo &&
+            <Fragment set:html={pwaInfo.webManifest.link}/>}
+    <script src="/registerSW.js" is:inline></script>
 </head>
 <body>
 <slot/>
