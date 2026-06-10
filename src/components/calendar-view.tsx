@@ -98,9 +98,19 @@ export const CalendarView = ({matches}: CalendarProps) => {
                         const dataTemplate = `${String(giorno).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}/${currentYear}`;
                         const haveMatchToday = matches.filter((m) => m.data === dataTemplate);
 
+                        const today = new Date();
+                        const currentYearT = today.getFullYear();
+                        const currentMonthT = today.getMonth();
+                        const currentDayT = today.getDate();
+
+                        const templateDateT = `${String(currentDayT).padStart(2, '0')}/${String(currentMonthT + 1).padStart(2, '0')}/${currentYearT}`;
+
+                        const isToday = templateDateT === dataTemplate;
+
                         return (
                             <Card key={i}
-                                  className={cn("cursor-pointer group relative flex h-16 md:h-24 flex-col justify-between p-2 rounded-lg border border-border bg-card shadow-2xs transition-all select-none hover:border-primary")}
+                                  className={cn("cursor-pointer group relative flex h-16 md:h-24 flex-col justify-between p-2 rounded-lg border bg-card shadow-2xs transition-all select-none hover:border-primary",
+                                      isToday ? "bg-red-200" : "border-border hover:border-primary")}
                                   onClick={() => handleDayClick(dataTemplate)}>
                                 <div className="flex justify-end w-full">
                                     <span
