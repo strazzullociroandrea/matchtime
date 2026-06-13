@@ -93,7 +93,7 @@ export const Navbar = ({type, onTypeChange, team, category}: {
                 <Button
                     variant="ghost"
                     onClick={() => window.location.href = "/settings"}
-                    className={`cursor-pointer flex flex-col h-auto ${type === "elenco" ? "text-blue-600" : "text-zinc-500"}`}
+                    className={`cursor-pointer flex flex-col h-auto   text-zinc-500 hover:text-blue-600`}
                 >
                     <Settings className="h-5 w-5"/>
                     <span className="text-[10px] truncate">Impostazioni</span>

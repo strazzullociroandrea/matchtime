@@ -251,6 +251,8 @@ export const Settings = ({lastUpdate}: { lastUpdate: string | null }) => {
                                 proprietà dei rispettivi comitati organizzatori (es. PGS, FIPAV, VolleyCup, CSI) e sono
                                 resi disponibili al pubblico dagli stessi tramite pubblicazione di documenti pdf.
                                 L'applicazione si limita a facilitarne la consultazione.
+                                L'autore non è responsabile di eventuali inesattezze o discrepanze nei dati mostrati,
+                                che potrebbero derivare da errori nei documenti originali o da ritardi nell'aggiornamento.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
